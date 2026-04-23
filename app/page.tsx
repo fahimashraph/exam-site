@@ -14,11 +14,27 @@ export default function Home() {
           </nav>
 
           <div className="flex gap-3">
-            <button className="text-sm px-4 py-2">Login</button>
-            <button className="bg-black text-white text-sm px-4 py-2 rounded-lg hover:opacity-90 transition">
-              Sign Up
-            </button>
-          </div>
+            <Link href="/auth">
+<button className="mr-4">Login</button>
+</Link>
+
+<Link href="/auth">
+<button className="bg-black text-white px-4 py-2 rounded">
+Sign Up
+</button>
+</Link>
+            <Link href="/auth" className="mr-4">
+Login
+</Link>
+
+<Link
+href="/auth"
+className="bg-black text-white px-4 py-2 rounded"
+>
+Sign Up
+</Link>
+
+ </div>
         </div>
       </header>
 
