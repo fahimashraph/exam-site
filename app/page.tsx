@@ -16,14 +16,15 @@ export default function Home() {
           <div className="flex gap-3">
 
 
-            <Link href="/auth">
-<button className="mr-4">Login</button>
+           <Link href="/auth?mode=login" className="mr-4">
+Login
 </Link>
 
-<Link href="/auth">
-<button className="bg-black text-white px-4 py-2 rounded">
+<Link
+href="/auth?mode=signup"
+className="bg-black text-white px-4 py-2 rounded"
+>
 Sign Up
-</button>
 </Link>
 </div>
         </div>
@@ -40,11 +41,9 @@ Sign Up
           everything you need to pass with confidence.
         </p>
 
-        import Link from "next/link";
-
 <Link
-href="/auth"
-className="bg-black text-white px-6 py-3 rounded-xl hover:opacity-90 transition"
+href="/auth?mode=signup"
+className="bg-black text-white px-6 py-3 rounded-xl"
 >
 Get Started
 </Link>

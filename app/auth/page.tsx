@@ -2,20 +2,19 @@
 
 import { useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
-import { useRouter } from "next/navigation";
-
+import { useRouter, useSearchParams } from "next/navigation";
 export default function AuthPage() {
 const router = useRouter();
+const searchParams = useSearchParams();
+const mode = searchParams.get("mode");
+const [isLogin, setIsLogin] = useState(mode !== "signup");
 
-const [isLogin, setIsLogin] = useState(true);
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
-
 const [fullName, setFullName] = useState("");
 const [school, setSchool] = useState("");
 const [phone, setPhone] = useState("");
 const [grade, setGrade] = useState("");
-
 const [message, setMessage] = useState("");
 const [loading, setLoading] = useState(false);
 
