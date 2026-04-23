@@ -84,7 +84,13 @@ className="w-full p-2 border mb-3"
 />
 
 <button
-onClick={handleAuth}
+onClick={async () => {
+try {
+await handleAuth();
+} catch (e) {
+console.error(e);
+}
+}}
 className="w-full bg-black text-white p-2 rounded"
 >
 {isLogin ? "Login" : "Sign Up"}
