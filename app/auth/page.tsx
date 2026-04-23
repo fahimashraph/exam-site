@@ -60,4 +60,47 @@ setMessage("Something went wrong");
 
 setLoading(false);
 };
+return (
+<div className="min-h-screen flex items-center justify-center bg-gray-100">
+<div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
+<h2 className="text-xl font-bold mb-4">
+{isLogin ? "Login" : "Sign Up"}
+</h2>
+
+<input
+type="email"
+placeholder="Email"
+value={email}
+onChange={(e) => setEmail(e.target.value)}
+className="w-full p-2 border mb-3"
+/>
+
+<input
+type="password"
+placeholder="Password"
+value={password}
+onChange={(e) => setPassword(e.target.value)}
+className="w-full p-2 border mb-3"
+/>
+
+<button
+onClick={handleAuth}
+className="w-full bg-black text-white p-2 rounded"
+>
+{isLogin ? "Login" : "Sign Up"}
+</button>
+
+<p className="mt-3 text-sm text-gray-600">{message}</p>
+
+<button
+onClick={() => setIsLogin(!isLogin)}
+className="mt-2 text-blue-500 text-sm"
+>
+{isLogin
+? "Don't have an account? Sign up"
+: "Already have an account? Login"}
+</button>
+</div>
+</div>
+);
 }
