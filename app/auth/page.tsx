@@ -8,7 +8,14 @@ export default function AuthPage() {
 const router = useRouter();
 const searchParams = useSearchParams();
 const mode = searchParams.get("mode");
-const [isLogin, setIsLogin] = useState(mode !== "signup");
+const [isLogin, setIsLogin] = useState(true);
+useEffect(() => {
+if (mode === "signup") {
+setIsLogin(false);
+} else {
+setIsLogin(true);
+}
+}, [mode]);
 
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
