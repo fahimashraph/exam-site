@@ -29,7 +29,6 @@ password,
 
 if (error) {
 setMessage(error.message);
-setLoading(false);
 return;
 }
 
@@ -46,7 +45,6 @@ password,
 
 if (error) {
 setMessage(error.message);
-setLoading(false);
 return;
 }
 
@@ -62,16 +60,6 @@ phone: phone,
 grade: grade,
 },
 ]);
-}
-
-setMessage("Account created! Check your email.");
-}
-
-
-if (error) {
-setMessage(error.message);
-setLoading(false);
-return;
 }
 
 setMessage("Account created! Check your email.");
