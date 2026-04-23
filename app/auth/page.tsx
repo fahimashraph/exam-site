@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function AuthPage() {
   const [fullName, setFullName] = useState("");
@@ -26,7 +26,13 @@ email,
 password,
 });
 
-if (error) throw error;
+if (error) {
+console.error(error.message);
+setMessage(error.message);
+setLoading(false);
+return;
+}
+
 
 setMessage("Logged in successfully!");
 setTimeout(() => {
