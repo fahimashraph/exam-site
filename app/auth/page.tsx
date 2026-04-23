@@ -1,10 +1,10 @@
 "use client";
-
+import { Suspense } from "react";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
 
-export default function AuthPage() {
+ function AuthContent() {
 const router = useRouter();
 const searchParams = useSearchParams();
 const mode = searchParams.get("mode");
@@ -188,4 +188,12 @@ className="mt-4 text-sm text-blue-500 text-center cursor-pointer"
 </div>
 </div>
 );
+ }
+export default function AuthPage() {
+return (
+<Suspense fallback={<div>Loading...</div>}>
+<AuthContent />
+</Suspense>
+);
 }
+ 
