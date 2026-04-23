@@ -1,4 +1,5 @@
 "use client";
+console.log("AUTH FIX V2");
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
