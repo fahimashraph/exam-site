@@ -39,10 +39,34 @@ router.push("/dashboard");
 }, 1000);
 
 } else {
-const { error } = await supabase.auth.signUp({
+const { data, error } = await supabase.auth.signUp({
 email,
 password,
 });
+
+if (error) {
+setMessage(error.message);
+setLoading(false);
+return;
+}
+
+const user = data.user;
+
+if (user) {
+await supabase.from("profiles").insert([
+{
+user_id: user.id,
+full_name: fullName,
+school: school,
+phone: phone,
+grade: grade,
+},
+]);
+}
+
+setMessage("Account created! Check your email.");
+}
+
 
 if (error) {
 setMessage(error.message);
