@@ -1,3 +1,4 @@
+import Link from "next/link"
 export default function Home() {
   return (
     <main className="bg-white text-gray-900">
@@ -32,14 +33,14 @@ export default function Home() {
           everything you need to pass with confidence.
         </p>
 
-        <div className="mt-8 flex justify-center gap-4">
-         <a href="/auth" className="bg-black text-white px-6 py-3 rounded-xl hover:opacity-90 transition inline-block">
+        import Link from "next/link";
+
+<Link
+href="/auth"
+className="bg-black text-white px-6 py-3 rounded-xl hover:opacity-90 transition"
+>
 Get Started
-</a>
-          <button className="border border-gray-300 px-6 py-3 rounded-xl hover:bg-gray-100 transition">
-            Try Demo
-          </button>
-        </div>
+</Link>
       </section>
 
       {/* FEATURES */}
