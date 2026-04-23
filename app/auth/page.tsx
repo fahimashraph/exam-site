@@ -94,7 +94,7 @@ value={password}
 onChange={(e) => setPassword(e.target.value)}
 className="w-full p-2 border mb-3"
 />
-{const [isLogin,setIsLogin] = useState(true)}
+
 {!isLogin && (
 <>
 <input
