@@ -1,17 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { supabase } from "../../lib/supabaseClient";
+
 export default function AuthPage() {
 const router = useRouter();
 const searchParams = useSearchParams();
 const mode = searchParams.get("mode");
-const [isLogin, setIsLogin] = useState(true);
-
-useEffect(() => {
-setIsLogin(mode !== "signup");
-}, [mode]);
+const [isLogin, setIsLogin] = useState(mode !== "signup");
 
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
