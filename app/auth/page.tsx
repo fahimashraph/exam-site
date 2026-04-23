@@ -72,6 +72,23 @@ setMessage("Something went wrong");
 setLoading(false);
 };
 
+const handleForgotPassword = async () => {
+if (!email) {
+setMessage("Enter your email first");
+return;
+}
+
+const { error } = await supabase.auth.resetPasswordForEmail(email, {
+redirectTo: "https://eduperch.com/reset-password",
+});
+
+if (error) {
+setMessage(error.message);
+} else {
+setMessage("Password reset email sent!");
+}
+};
+
 return (
 <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
 <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
@@ -98,7 +115,12 @@ value={password}
 onChange={(e) => setPassword(e.target.value)}
 className="w-full p-3 mb-3 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
 />
-
+<p
+className="text-sm text-blue-500 cursor-pointer mb-3"
+onClick={handleForgotPassword}
+>
+Forgot password?
+</p>
 
 {/* Extra fields (Sign Up only) */}
 {!isLogin && (
