@@ -1,9 +1,8 @@
 "use client";
-console.log("AUTH FIX V2");
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
-
+console.log("AUTH FIX V2");
 export default function AuthPage() {
   const [fullName, setFullName] = useState("");
 const [school, setSchool] = useState("");
@@ -61,3 +60,4 @@ setMessage("Something went wrong");
 
 setLoading(false);
 };
+}
