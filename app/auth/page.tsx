@@ -94,6 +94,38 @@ value={password}
 onChange={(e) => setPassword(e.target.value)}
 className="w-full p-2 border mb-3"
 />
+{const [isLogin,setIsLogin] = useState(true)}
+{!isLogin && (
+<>
+<input
+placeholder="Full Name"
+value={fullName}
+onChange={(e) => setFullName(e.target.value)}
+className="w-full p-2 border mb-3"
+/>
+
+<input
+placeholder="School"
+value={school}
+onChange={(e) => setSchool(e.target.value)}
+className="w-full p-2 border mb-3"
+/>
+
+<input
+placeholder="Phone"
+value={phone}
+onChange={(e) => setPhone(e.target.value)}
+className="w-full p-2 border mb-3"
+/>
+
+<input
+placeholder="Grade"
+value={grade}
+onChange={(e) => setGrade(e.target.value)}
+className="w-full p-2 border mb-3"
+/>
+</>
+)}
 
 <button
 onClick={async () => {
