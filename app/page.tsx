@@ -15,7 +15,7 @@ export default function Home() {
 
           <div className="flex gap-3">
 
-            
+
             <Link href="/auth">
 <button className="mr-4">Login</button>
 </Link>
@@ -24,7 +24,7 @@ export default function Home() {
 <button className="bg-black text-white px-4 py-2 rounded">
 Sign Up
 </button>
-
+</Link>
 </div>
         </div>
       </header>
