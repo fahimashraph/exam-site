@@ -15,6 +15,15 @@ total: 0,
 best: 0,
 average: 0,
 })
+const [editing, setEditing] = useState(false)
+
+const [formData, setFormData] = useState({
+full_name: "",
+school: "",
+phone: "",
+grade: "",
+})
+
 useEffect(() => {
 const loadDashboard = async () => {
 const { data } = await supabase.auth.getUser()
@@ -35,6 +44,13 @@ const { data: profileData, error: profileError } = await supabase
 
 if (!profileError && profileData) {
 setProfile(profileData)
+
+setFormData({
+full_name: profileData.full_name || "",
+school: profileData.school || "",
+phone: profileData.phone || "",
+grade: profileData.grade || "",
+})
 }
 
 // ✅ RESULTS FETCH (already there)
@@ -143,12 +159,80 @@ return (
 </div>
 
 {/* 👤 PROFILE SECTION */}
+{editing ? (
+// ✏️ EDIT MODE
+<div className="mt-6 space-y-3">
+<input
+type="text"
+placeholder="Full Name"
+value={formData.full_name}
+onChange={(e) =>
+setFormData({ ...formData, full_name: e.target.value })
+}
+className="w-full p-2 rounded bg-gray-200 dark:bg-gray-700"
+/>
+
+<input
+type="text"
+placeholder="School"
+value={formData.school}
+onChange={(e) =>
+setFormData({ ...formData, school: e.target.value })
+}
+className="w-full p-2 rounded bg-gray-200 dark:bg-gray-700"
+/>
+
+<input
+type="text"
+placeholder="Phone"
+value={formData.phone}
+onChange={(e) =>
+setFormData({ ...formData, phone: e.target.value })
+}
+className="w-full p-2 rounded bg-gray-200 dark:bg-gray-700"
+/>
+
+<input
+type="text"
+placeholder="Grade"
+value={formData.grade}
+onChange={(e) =>
+setFormData({ ...formData, grade: e.target.value })
+}
+className="w-full p-2 rounded bg-gray-200 dark:bg-gray-700"
+/>
+
+<div className="flex gap-3">
+<button
+onClick={() => setEditing(false)}
+className="bg-gray-500 text-white px-4 py-2 rounded"
+>
+Cancel
+</button>
+
+<button
+className="bg-green-500 text-white px-4 py-2 rounded"
+>
+Save
+</button>
+</div>
+</div>
+) : (
+// 👀 VIEW MODE
 <div className="mt-6 space-y-2">
 <p><strong>Name:</strong> {profile?.full_name}</p>
 <p><strong>School:</strong> {profile?.school}</p>
 <p><strong>Phone:</strong> {profile?.phone}</p>
 <p><strong>Grade:</strong> {profile?.grade}</p>
+
+<button
+onClick={() => setEditing(true)}
+className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+>
+Edit Profile
+</button>
 </div>
+)}
 
 {/* 🚪 LOGOUT */}
 <button
