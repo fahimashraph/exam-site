@@ -23,7 +23,28 @@ school: "",
 phone: "",
 grade: "",
 })
+const handleSave = async () => {
+const { data: userData } = await supabase.auth.getUser()
 
+if (!userData.user) return
+
+const { error: updateError } = await supabase
+.from("profiles")
+.update({
+full_name: formData.full_name,
+school: formData.school,
+phone: formData.phone,
+grade: formData.grade,
+})
+.eq("user_id", userData.user.id)
+
+if (!updateError) {
+setProfile(formData)
+setEditing(false)
+} else {
+console.error(updateError)
+}
+}
 useEffect(() => {
 const loadDashboard = async () => {
 const { data } = await supabase.auth.getUser()
