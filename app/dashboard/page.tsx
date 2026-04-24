@@ -25,8 +25,24 @@ return
 }
 
 setUser(data.user)
+
+// ✅ PROFILE FETCH (NEW)
+const { data: profileData, error: profileError } = await supabase
+.from("profiles")
+.select("*")
+.eq("user_id", data.user.id)
+.single()
+
+if (!profileError && profileData) {
+setProfile(profileData)
+}
+
+// ✅ RESULTS FETCH (already there)
 const { data: resultsData, error } = await supabase
 .from("results")
+.select("*")
+.eq("user_id", data.user.id)
+.order("created_at", { ascending: false })
 .select("*")
 .eq("user_id", data.user.id)
 .order("created_at", { ascending: false })
