@@ -224,8 +224,18 @@ setFormData({ ...formData, grade: e.target.value })
 }
 className="w-full p-2 rounded bg-gray-200 dark:bg-gray-700"
 />
-
 <div className="flex gap-3">
+
+<button
+onClick={handleSave}
+className="mt-4 bg-green-500 text-white px-4 py-2 rounded"
+>
+Save
+</button>
+</div>
+) : (
+    <div>
+
 <button
 onClick={() => setEditing(false)}
 className="bg-gray-500 text-white px-4 py-2 rounded"
