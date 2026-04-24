@@ -30,6 +30,7 @@ className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
 
     
       <body className="min-h-full flex flex-col bg-white text-black dark:bg-black dark:text-white">
+        {children}
 </body>
     </html>
   );
