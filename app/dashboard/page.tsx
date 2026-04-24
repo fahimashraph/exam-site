@@ -9,36 +9,86 @@ const [user, setUser] = useState<any>(null);
 const [profile, setProfile] = useState<any>(null);
 const [loading, setLoading] = useState(true);
 const router = useRouter();
-
+const [results, setResults] = useState<any[]>([])
+const [stats, setStats] = useState({
+total: 0,
+best: 0,
+average: 0,
+})
 useEffect(() => {
-const getUserAndProfile = async () => {
-const { data } = await supabase.auth.getUser();
+const loadDashboard = async () => {
+const { data } = await supabase.auth.getUser()
 
-// ❌ Not logged in → send back to auth
 if (!data.user) {
-router.push("/auth");
-return;
+router.push("/auth")
+return
 }
 
-
-// ✅ Set user
-setUser(data.user);
-setLoading(false)
-
-// ✅ Get profile from DB
-const { data: profileData, error } = await supabase
-.from("profiles")
+setUser(data.user)
+const { data: resultsData, error } = await supabase
+.from("results")
 .select("*")
 .eq("user_id", data.user.id)
-.single();
+.order("created_at", { ascending: false })
 
-if (!error) {
-console.log(profileData);
+if (!error && resultsData) {
+setResults(resultsData)
+
+if (resultsData.length > 0) {
+const totalAttempts = resultsData.length
+
+const bestScore = Math.max(
+...resultsData.map((r) => r.score)
+)
+
+const avgScore =
+resultsData.reduce((acc, r) => acc + r.score, 0) /
+totalAttempts
+
+setStats({
+total: totalAttempts,
+best: bestScore,
+average: Math.round(avgScore * 100) / 100,
+})
 }
-};
+}
 
-getUserAndProfile();
-}, []);
+setLoading(false)
+// 🔥 fetch results for THIS user only
+
+supabase.from("results")
+.select("*")
+.eq("user_id", data.user.id)
+.order("created_at", { ascending: false })
+
+if (!error && resultsData) {
+setResults(resultsData)
+
+if (resultsData.length > 0) {
+const totalAttempts = resultsData.length
+
+const bestScore = Math.max(
+...resultsData.map((r) => r.score)
+)
+
+const avgScore =
+resultsData.reduce((acc, r) => acc + r.score, 0) /
+totalAttempts
+
+setStats({
+total: totalAttempts,
+best: bestScore,
+average: Math.round(avgScore * 100) / 100,
+})
+}
+}
+
+setLoading(false)
+}
+
+loadDashboard()
+}, [])
+
 
 // 🔴 Logout
 const handleLogout = async () => {
