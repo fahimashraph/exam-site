@@ -83,9 +83,9 @@ console.log("Result saved!")
 if (!currentQuestion) return <div>Loading...</div>
 
 return (
-<div className="p-6 max-w-xl mx-auto">
+<div className="p-6 max-w-xl mx-auto min-h-screen bg-gray-100 dark:bg-gray-900 text-black dark-text-white">
     <div className="mb-4 flex justify-between items-center">
-<h2 className="text-sm text-gray-500">
+<h2 className="text-sm text-gray-500 dark:text-gray-500">
 Question {currentQuestionIndex + 1} / {questions.length}
 </h2>
 
@@ -95,8 +95,8 @@ Question {currentQuestionIndex + 1} / {questions.length}
 </h2>
 </div>
 {submitted && (
-<div className="mb-4 p-4 bg-gray-100 rounded text-center">
-<h2 className="text-lg font-bold mb-3">
+<div className="mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded text-center">
+<h2 className="text-lg font-bold mb-3 text-black dark:text-white">
 Score: {score} / {questions.length}
 </h2>
 
@@ -122,8 +122,7 @@ return (
   key={opt}
   onClick={() => handleAnswer(opt)}
   disabled={submitted}
-  className={`w-full text-left p-3 border rounded-lg transition-all duration-200
-${
+  className={`w-full text-left p-3 border border-gray-300 dark:border-gray-700 rounded-lg transition-all duration-200 bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
 submitted
 ? opt === currentQuestion.correct_answer
 ? "bg-green-500 text-white"
