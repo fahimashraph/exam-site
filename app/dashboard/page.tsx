@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { console } from "inspector";
 
 export default function Dashboard() {
 const [user, setUser] = useState<any>(null);
@@ -23,7 +24,9 @@ school: "",
 phone: "",
 grade: "",
 })
+
 const handleSave = async () => {
+    console.log("Save clicked")
 const { data: userData } = await supabase.auth.getUser()
 
 if (!userData.user) return
@@ -37,7 +40,6 @@ phone: formData.phone,
 grade: formData.grade,
 })
 .eq("user_id", userData.user.id)
-
 if (!updateError) {
 setProfile(formData)
 setEditing(false)
