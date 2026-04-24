@@ -31,58 +31,42 @@ const [message, setMessage] = useState("");
 const [loading, setLoading] = useState(false);
 
 const handleAuth = async () => {
-setLoading(true);
-setMessage("");
+setLoading(true)
 
-try {
 if (isLogin) {
 const { error } = await supabase.auth.signInWithPassword({
 email,
 password,
-});
+})
 
 if (error) {
-setMessage(error.message);
-setLoading(false);
-return;
-}
-
-router.push("/dashboard");
+setMessage(error.message)
 } else {
-const { data, error } = await supabase.auth.signUp({
+router.push("/dashboard")
+}
+} else {
+const { error } = await supabase.auth.signUp({
 email,
 password,
-});
+options: {
+data: {
+full_name: fullName,
+school,
+phone,
+grade,
+},
+},
+})
 
 if (error) {
-setMessage(error.message);
-setLoading(false);
-return;
+setMessage(error.message)
+} else {
+setMessage("Check your email to confirm signup")
+}
 }
 
-const user = data.user;
-
-if (user) {
-await supabase.from("profiles").insert([
-{
-user_id: user.id,
-full_name: fullName,
-school: school,
-phone: phone,
-grade: grade,
-},
-]);
+setLoading(false)
 }
-
-router.push("/dashboard");
-}
-} catch (err) {
-setMessage("Something went wrong");
-}
-
-setLoading(false);
-};
-
 const handleForgotPassword = async () => {
 if (!email) {
 setMessage("Enter your email first");
