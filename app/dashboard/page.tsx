@@ -102,11 +102,31 @@ return <p className="p-10 text-white">Loading...</p>;
 }
 
 return (
-<div className="p-10 text-white">
+<div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white">
+
 <h1 className="text-3xl font-bold">Dashboard</h1>
 
 <p className="mt-2">Welcome: {user?.email}</p>
 
+{/* 🔥 STATS SECTION */}
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+<div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+<p>Total Attempts</p>
+<h2 className="text-xl font-bold">{stats.total}</h2>
+</div>
+
+<div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+<p>Best Score</p>
+<h2 className="text-xl font-bold">{stats.best}</h2>
+</div>
+
+<div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+<p>Average</p>
+<h2 className="text-xl font-bold">{stats.average}</h2>
+</div>
+</div>
+
+{/* 👤 PROFILE SECTION */}
 <div className="mt-6 space-y-2">
 <p><strong>Name:</strong> {profile?.full_name}</p>
 <p><strong>School:</strong> {profile?.school}</p>
@@ -114,12 +134,14 @@ return (
 <p><strong>Grade:</strong> {profile?.grade}</p>
 </div>
 
+{/* 🚪 LOGOUT */}
 <button
 onClick={handleLogout}
 className="mt-6 bg-red-500 text-white px-4 py-2 rounded"
 >
 Logout
 </button>
+
 </div>
-);
+)
 }
