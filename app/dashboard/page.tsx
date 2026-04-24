@@ -8,7 +8,6 @@ export default function Dashboard() {
 const [user, setUser] = useState<any>(null);
 const [profile, setProfile] = useState<any>(null);
 const [loading, setLoading] = useState(true);
-
 const router = useRouter();
 
 useEffect(() => {
@@ -21,8 +20,10 @@ router.push("/auth");
 return;
 }
 
+
 // ✅ Set user
 setUser(data.user);
+setLoading(false)
 
 // ✅ Get profile from DB
 const { data: profileData, error } = await supabase
@@ -32,10 +33,8 @@ const { data: profileData, error } = await supabase
 .single();
 
 if (!error) {
-setProfile(profileData);
+console.log(profileData);
 }
-
-setLoading(false);
 };
 
 getUserAndProfile();
