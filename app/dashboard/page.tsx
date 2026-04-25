@@ -51,7 +51,8 @@ setSaving(false)
 }
 useEffect(() => {
 const loadDashboard = async () => {
-const { data } = await supabase.auth.getUser()
+
+const { data, error } = await supabase.auth.getUser()
 
 if (!data.user) {
 router.push("/auth")
@@ -60,20 +61,14 @@ return
 
 setUser(data.user)
 
-const { data: userData } = await supabase.auth.getUser()
-const user = userData.user
-
-if (!user) return
-
-const { data: resultsData, error } = await supabase
+const { data: resultsData, error: resultsError } = await supabase
 .from("results")
 .select("*")
-.eq("user_id", user.id)
+.eq("user_id", data.user.id)
 
-if (!error && resultsData) {
+if (!resultsError && resultsData && resultsData.length > 0) {
 setResults(resultsData)
 
-if (resultsData.length > 0) {
 const totalAttempts = resultsData.length
 
 const bestScore = Math.max(
@@ -90,14 +85,12 @@ best: bestScore,
 average: Math.round(avgScore * 100) / 100,
 })
 }
-}
 
 setLoading(false)
 }
 
 loadDashboard()
 }, [])
-
 // 🔴 Logout
 const handleLogout = async () => {
 await supabase.auth.signOut();
