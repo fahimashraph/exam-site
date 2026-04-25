@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
-
+import Link from "next/link"
 
 export default function Dashboard() {
 const [user, setUser] = useState<any>(null);
@@ -60,33 +60,11 @@ return
 
 setUser(data.user)
 
-// ✅ PROFILE FETCH (NEW)
-const { data: profileData, error: profileError } = await supabase
-.from("profiles")
-.select("*")
-.eq("user_id", data.user.id)
-.single()
-
-if (!profileError && profileData) {
-setProfile(profileData)
-
-setFormData({
-full_name: profileData.full_name || "",
-school: profileData.school || "",
-phone: profileData.phone || "",
-grade: profileData.grade || "",
-})
-}
-
-// ✅ RESULTS FETCH (already there)
 const { data: resultsData, error } = await supabase
 .from("results")
 .select("*")
 .eq("user_id", data.user.id)
 .order("created_at", { ascending: false })
-.select("*")
-.eq("user_id", data.user.id)
-.order("created_at", { ascending: false })
 
 if (!error && resultsData) {
 setResults(resultsData)
@@ -100,37 +78,7 @@ const bestScore = Math.max(
 
 const avgScore =
 resultsData.reduce((acc, r) => acc + r.score, 0) /
-totalAttempts
-
-setStats({
-total: totalAttempts,
-best: bestScore,
-average: Math.round(avgScore * 100) / 100,
-})
-}
-}
-
-setLoading(false)
-// 🔥 fetch results for THIS user only
-
-supabase.from("results")
-.select("*")
-.eq("user_id", data.user.id)
-.order("created_at", { ascending: false })
-
-if (!error && resultsData) {
-setResults(resultsData)
-
-if (resultsData.length > 0) {
-const totalAttempts = resultsData.length
-
-const bestScore = Math.max(
-...resultsData.map((r) => r.score)
-)
-
-const avgScore =
-resultsData.reduce((acc, r) => acc + r.score, 0) /
-totalAttempts
+resultsData.length
 
 setStats({
 total: totalAttempts,
@@ -145,7 +93,6 @@ setLoading(false)
 
 loadDashboard()
 }, [])
-
 
 // 🔴 Logout
 const handleLogout = async () => {
@@ -182,6 +129,12 @@ return (
 <h2 className="text-xl font-bold">{stats.average}</h2>
 </div>
 </div>
+
+<Link href="/exam">
+<button className="mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg w-full">
+Start Exam
+</button>
+</Link>
 
 {/* 👤 PROFILE SECTION */}
 {editing ? (
