@@ -126,6 +126,9 @@ return (
 <h1 className="text-3xl font-bold">Dashboard</h1>
 
 <p className="mt-2">Welcome: {user?.email}</p>
+<p>User ID: {user?.id}</p>
+<p>Results count: {results.length}</p>
+
 
 {/* 🔥 STATS SECTION */}
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
