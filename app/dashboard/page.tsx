@@ -60,7 +60,15 @@ return
 }
 
 setUser(data.user)
+const { data: profileData } = await supabase
+.from("profiles")
+.select("*")
+.eq("id", data.user.id)
+.single()
 
+if (profileData) {
+setProfile(profileData)
+}
 const { data: resultsData, error: resultsError } = await supabase
 .from("results")
 .select("*")
