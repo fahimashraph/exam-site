@@ -74,9 +74,10 @@ const { data: resultsData, error: resultsError } = await supabase
 .select("*")
 .eq("user_id", data.user.id)
 
-if (!resultsError && resultsData && resultsData.length > 0) {
+if (!resultsError && resultsData) {
 setResults(resultsData)
 
+if (resultsData.length > 0) {
 const totalAttempts = resultsData.length
 
 const bestScore = Math.max(
@@ -92,8 +93,14 @@ total: totalAttempts,
 best: bestScore,
 average: Math.round(avgScore * 100) / 100,
 })
+} else {
+setStats({
+total: 0,
+best: 0,
+average: 0,
+})
 }
-
+}
 setLoading(false)
 }
 
