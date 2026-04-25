@@ -67,9 +67,13 @@ const { data: userData } = await supabase.auth.getUser()
 
 if (!userData.user) return
 
+const { data: authData } = await supabase.auth.getUser()
+
+if (!authData?.user) return
+
 const { error } = await supabase.from("results").insert([
 {
-user_id: userData.user.id,
+user_id: authData.user.id, // ✅ GUARANTEED correct
 score: newScore,
 total: questions.length,
 created_at: new Date().toISOString(),
