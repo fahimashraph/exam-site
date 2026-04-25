@@ -62,17 +62,20 @@ newScore++
 
 setScore(newScore)
 setSubmitted(true)
-// 🔥 SAVE RESULT
-const { error } = await supabase
-.from("results")
-.insert([
+
+const { data: userData } = await supabase.auth.getUser()
+
+if (!userData.user) return
+
+const { error } = await supabase.from("results").insert([
 {
+user_id: userData.user.id,
 score: newScore,
 total: questions.length,
 created_at: new Date().toISOString(),
 },
 ])
-console.log("INSERT ERROR:",error)
+
 if (error) {
 console.error("Save error:", error)
 } else {
