@@ -125,7 +125,8 @@ return (
   key={opt}
   onClick={() => handleAnswer(opt)}
   disabled={submitted}
-  className={`w-full text-left p-3 border border-gray-300 dark:border-gray-700 rounded-lg transition-all duration-200 bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${
+  className={`w-full text-left p-3 border rounded
+${
 submitted
 ? opt === currentQuestion.correct_answer
 ? "bg-green-500 text-white"
@@ -135,7 +136,8 @@ submitted
 : answers[currentQuestionIndex] === opt
 ? "bg-blue-500 text-white"
 : "bg-white hover:bg-gray-200"
-}`}
+}
+`}
 >
 {opt}. {value}
 </button>
