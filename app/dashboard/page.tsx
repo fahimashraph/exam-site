@@ -17,7 +17,7 @@ best: 0,
 average: 0,
 })
 const [editing, setEditing] = useState(false)
-
+const [saving, setSaving] = useState(false)
 const [formData, setFormData] = useState({
 full_name: "",
 school: "",
@@ -40,12 +40,14 @@ phone: formData.phone,
 grade: formData.grade,
 })
 .eq("user_id", userData.user.id)
-if (!updateError) {
+if (updateError) {
+console.error(updateError)
+} else {
 setProfile(formData)
 setEditing(false)
-} else {
-console.error(updateError)
+alert("Profile updated successfully")
 }
+setSaving(false)
 }
 useEffect(() => {
 const loadDashboard = async () => {
@@ -233,7 +235,7 @@ Cancel
 onClick={handleSave}
 className="bg-green-500 text-white px-4 py-2 rounded"
 >
-Save
+{saving ? "Saving..." : "Save"}
 </button>
 </div>
 
