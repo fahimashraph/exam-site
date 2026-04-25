@@ -54,27 +54,33 @@ const loadDashboard = async () => {
 try {
 const { data, error } = await supabase.auth.getUser()
 
-if (!data.user) {
-router.push("/auth")
+console.log("AUTH USER:", data?.user)
+
+if (!data?.user) {
+console.log("NO USER FOUND")
 return
 }
 
+const userId = data.user.id
+console.log("USER ID:", userId)
+
 setUser(data.user)
 
+// PROFILE
 const { data: profileData } = await supabase
 .from("profiles")
 .select("*")
-.eq("id", data.user.id)
+.eq("id", userId)
 .single()
 
 if (profileData) setProfile(profileData)
 
+// RESULTS
 const { data: resultsData, error: resultsError } = await supabase
 .from("results")
 .select("*")
-.eq("user_id", data.user.id)
+.eq("user_id", userId)
 
-console.log("USER:", data.user.id)
 console.log("RESULTS:", resultsData)
 
 if (!resultsError && resultsData && resultsData.length > 0) {
@@ -97,7 +103,7 @@ average: Math.round(avgScore * 100) / 100,
 } catch (err) {
 console.error("DASHBOARD ERROR:", err)
 } finally {
-setLoading(false) // 🔥 ALWAYS runs
+setLoading(false)
 }
 }
 
