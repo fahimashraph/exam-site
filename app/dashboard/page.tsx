@@ -74,6 +74,7 @@ const { data: resultsData, error: resultsError } = await supabase
 .select("*")
 .eq("user_id", data.user.id)
 
+console.log("USER:",data,user.id)
 console.log("RESULTS:", resultsData)
 
 if (!resultsError && resultsData) {
