@@ -51,7 +51,7 @@ setSaving(false)
 }
 useEffect(() => {
 const loadDashboard = async () => {
-
+try {
 const { data, error } = await supabase.auth.getUser()
 
 if (!data.user) {
@@ -60,27 +60,24 @@ return
 }
 
 setUser(data.user)
+
 const { data: profileData } = await supabase
 .from("profiles")
 .select("*")
 .eq("id", data.user.id)
 .single()
 
-if (profileData) {
-setProfile(profileData)
-}
+if (profileData) setProfile(profileData)
+
 const { data: resultsData, error: resultsError } = await supabase
 .from("results")
 .select("*")
 .eq("user_id", data.user.id)
 
-console.log("USER:",data,user.id)
+console.log("USER:", data.user.id)
 console.log("RESULTS:", resultsData)
 
-if (!resultsError && resultsData) {
-setResults(resultsData)
-
-if (resultsData.length > 0) {
+if (!resultsError && resultsData && resultsData.length > 0) {
 const totalAttempts = resultsData.length
 
 const bestScore = Math.max(
@@ -96,15 +93,12 @@ total: totalAttempts,
 best: bestScore,
 average: Math.round(avgScore * 100) / 100,
 })
-} else {
-setStats({
-total: 0,
-best: 0,
-average: 0,
-})
 }
+} catch (err) {
+console.error("DASHBOARD ERROR:", err)
+} finally {
+setLoading(false) // 🔥 ALWAYS runs
 }
-setLoading(false)
 }
 
 loadDashboard()
