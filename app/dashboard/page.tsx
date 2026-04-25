@@ -25,32 +25,8 @@ phone: "",
 grade: "",
 })
 
-const handleSave = async () => {
-    console.log("Save clicked")
-const { data: userData } = await supabase.auth.getUser()
-
-if (!userData.user) return
-
-const { error: updateError } = await supabase
-.from("profiles")
-.update({
-full_name: formData.full_name,
-school: formData.school,
-phone: formData.phone,
-grade: formData.grade,
-})
-.eq("user_id", userData.user.id)
-if (updateError) {
-console.error(updateError)
-} else {
-setProfile(formData)
-setEditing(false)
-alert("Profile updated successfully")
-}
-setSaving(false)
-}
-useEffect(() => {
 const loadDashboard = async () => {
+try {
 const { data: authData } = await supabase.auth.getUser()
 
 if (!authData?.user) {
@@ -59,17 +35,26 @@ return
 }
 
 const userId = authData.user.id
-
-console.log("USER ID:", userId)
-
 setUser(authData.user)
 
-// ✅ FETCH RESULTS (clean + reliable)
+// ✅ PROFILE
+const { data: profileData } = await supabase
+.from("profiles")
+.select("*")
+.eq("id", userId)
+.single()
+
+if (profileData) {
+setProfile(profileData)
+}
+
+// ✅ RESULTS
 const { data: resultsData, error } = await supabase
 .from("results")
 .select("*")
 .eq("user_id", userId)
 
+console.log("USER:", userId)
 console.log("RESULTS:", resultsData)
 
 if (!error && resultsData) {
@@ -89,13 +74,20 @@ average: Math.round(avgScore * 100) / 100,
 })
 }
 }
-
-setLoading(false)
+} catch (err) {
+console.error("Dashboard error:", err)
 }
 
-
+// 🚨 THIS WAS PROBABLY MISSING / BROKEN
+finally {
+setLoading(false)
+}
+}
+useEffect(() => {
 loadDashboard()
 }, [])
+
+const handleSave = async () => {console.log("Save clicked")}
 // 🔴 Logout
 const handleLogout = async () => {
 await supabase.auth.signOut();
