@@ -60,11 +60,15 @@ return
 
 setUser(data.user)
 
+const { data: userData } = await supabase.auth.getUser()
+const user = userData.user
+
+if (!user) return
+
 const { data: resultsData, error } = await supabase
 .from("results")
 .select("*")
-.eq("user_id", data.user.id)
-.order("created_at", { ascending: false })
+.eq("user_id", user.id)
 
 if (!error && resultsData) {
 setResults(resultsData)
