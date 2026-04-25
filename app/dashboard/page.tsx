@@ -51,45 +51,33 @@ setSaving(false)
 }
 useEffect(() => {
 const loadDashboard = async () => {
-try {
-const { data, error } = await supabase.auth.getUser()
+const { data: authData } = await supabase.auth.getUser()
 
-console.log("AUTH USER:", data?.user)
-
-if (!data?.user) {
-console.log("NO USER FOUND")
+if (!authData?.user) {
+router.push("/auth")
 return
 }
 
-const userId = data.user.id
+const userId = authData.user.id
+
 console.log("USER ID:", userId)
 
-setUser(data.user)
+setUser(authData.user)
 
-// PROFILE
-const { data: profileData } = await supabase
-.from("profiles")
-.select("*")
-.eq("id", userId)
-.single()
-
-if (profileData) setProfile(profileData)
-
-// RESULTS
-const { data: resultsData, error: resultsError } = await supabase
+// ✅ FETCH RESULTS (clean + reliable)
+const { data: resultsData, error } = await supabase
 .from("results")
 .select("*")
 .eq("user_id", userId)
 
 console.log("RESULTS:", resultsData)
 
-if (!resultsError && resultsData && resultsData.length > 0) {
+if (!error && resultsData) {
+setResults(resultsData)
+
+if (resultsData.length > 0) {
 const totalAttempts = resultsData.length
-
-const bestScore = Math.max(
-...resultsData.map((r) => r.score)
-)
-
+const bestScore = Math.max(...resultsData.map(r => r.score))
 const avgScore =
 resultsData.reduce((acc, r) => acc + r.score, 0) /
 resultsData.length
@@ -100,12 +88,11 @@ best: bestScore,
 average: Math.round(avgScore * 100) / 100,
 })
 }
-} catch (err) {
-console.error("DASHBOARD ERROR:", err)
-} finally {
+}
+
 setLoading(false)
 }
-}
+
 
 loadDashboard()
 }, [])
