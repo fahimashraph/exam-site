@@ -87,7 +87,35 @@ useEffect(() => {
 loadDashboard()
 }, [])
 
-const handleSave = async () => {console.log("Save clicked")}
+const handleSave = async () => {
+setSaving(true)
+
+const { data: { user } } = await supabase.auth.getUser()
+
+if (!user) {
+setSaving(false)
+return
+}
+
+const { error } = await supabase
+.from("profiles")
+.update({
+full_name: formData.full_name,
+school: formData.school,
+phone: formData.phone,
+grade: formData.grade,
+})
+.eq("id", user.id)
+
+if (error) {
+console.error("Update error:", error)
+} else {
+setProfile(formData)
+setEditing(false)
+}
+
+setSaving(false)
+}
 // 🔴 Logout
 const handleLogout = async () => {
 await supabase.auth.signOut();
