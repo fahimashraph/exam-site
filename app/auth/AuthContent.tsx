@@ -112,13 +112,14 @@ onChange={(e) => setPassword(e.target.value)}
 className="w-full p-3 mb-3 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
 
 />
+{isLogin && (
 <p
 className="text-sm text-blue-500 dark:text-blue-400 cursor-pointer mb-3"
 onClick={handleForgotPassword}
 >
 Forgot password?
 </p>
-
+)}
 {/* Extra fields (Sign Up only) */}
 {!isLogin && (
 <>

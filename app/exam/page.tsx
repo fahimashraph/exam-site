@@ -68,11 +68,9 @@ setScore(newScore)
 setSubmitted(true)
 
 const { data: userData } = await supabase.auth.getUser()
-
 if (!userData.user) return
 
 const { data: authData } = await supabase.auth.getUser()
-
 if (!authData?.user) return
 
 const { error } = await supabase.from("results").insert([
