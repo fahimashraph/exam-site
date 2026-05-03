@@ -137,16 +137,10 @@ return (
 key={opt}
 onClick={() => handleAnswer(opt)}
 disabled={submitted}
-className={`w-full text-left p-3 border rounded ${
-submitted
-? opt === currentQuestion.correct_answer
-? "bg-green-500 text-white"
-: answers[currentQuestionIndex] === opt
-? "bg-red-500 text-white"
-: "bg-gray-100"
-: answers[currentQuestionIndex] === opt
-? "bg-blue-500 text-white"
-: "bg-white hover:bg-gray-200"
+className={`w-full text-left p-3 border rounded transition ${
+answers[currentQuestionIndex] === opt
+? "bg-blue-600 text-white"
+: "bg-white dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-600"
 }`}
 >
 {opt}. {value}
