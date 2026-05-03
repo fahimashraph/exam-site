@@ -206,7 +206,15 @@ className="bg-green-500 text-white px-4 py-2 rounded"
 <p><strong>Grade:</strong> {profile?.grade}</p>
 
 <button
-onClick={() => setEditing(true)}
+onClick={() => {
+setFormData({
+full_name: profile?.full_name || "",
+school: profile?.school || "",
+phone: profile?.phone || "",
+grade: profile?.grade || "",
+})
+setEditing(true)
+}}
 className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
 >
 Edit Profile
