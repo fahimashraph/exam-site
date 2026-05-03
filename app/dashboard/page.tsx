@@ -132,8 +132,7 @@ return (
 
 <h1 className="text-3xl font-bold">Dashboard</h1>
 
-<p className="mt-2">Welcome: {user?.email}</p>
-<p>User ID: {user?.id}</p>
+<p className="mt-2">Welcome: {profile?.full_name || "User"}</p>
 <p>Results count: {results.length}</p>
 
 
