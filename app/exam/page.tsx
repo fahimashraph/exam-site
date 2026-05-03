@@ -6,7 +6,7 @@ export default function ExamPage() {
 const [questions, setQuestions] = useState<any[]>([])
 const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 const [answers, setAnswers] = useState<{ [key: number]: string }>({})
-const [timeLeft, setTimeLeft] = useState(300)
+const [timeLeft, setTimeLeft] = useState(5400) //1h 30min
 const [submitted, setSubmitted] = useState(false)
 const [score, setScore] = useState(0)
 
