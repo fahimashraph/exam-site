@@ -136,7 +136,9 @@ Start Exam
 {/* 👤 PROFILE SECTION */}
 {editing ? (
 <div className="mt-6 space-y-3">
-
+<label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+    Full Name
+</label>
 <input
 type="text"
 value={formData.full_name}
@@ -145,7 +147,9 @@ setFormData({ ...formData, full_name: e.target.value })
 }
 className="w-full p-2 rounded bg-gray-200 dark:bg-gray-700"
 />
-
+<label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+    School
+</label>
 <input
 type="text"
 value={formData.school}
@@ -154,7 +158,9 @@ setFormData({ ...formData, school: e.target.value })
 }
 className="w-full p-2 rounded bg-gray-200 dark:bg-gray-700"
 />
-
+<label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+    Phone 
+</label>
 <input
 type="text"
 value={formData.phone}
@@ -163,7 +169,9 @@ setFormData({ ...formData, phone: e.target.value })
 }
 className="w-full p-2 rounded bg-gray-200 dark:bg-gray-700"
 />
-
+<label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+    Grade
+</label>
 <input
 type="text"
 value={formData.grade}
