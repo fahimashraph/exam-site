@@ -1,14 +1,13 @@
 "use client"
 
-export const dynamic = "force-dynamic"
+import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { questions } from "../../../lib/questions"
 
-export default function ReviewPage() {
+function ReviewContent() {
 const params = useSearchParams()
 const answers = JSON.parse(params.get("answers") || "{}")
 
-// 🔥 SCORE LOGIC
 const total = questions.length
 let score = 0
 
@@ -24,7 +23,6 @@ return (
 <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 text-black dark:text-white">
 <h1 className="text-2xl font-bold mb-4">Review</h1>
 
-{/* SCORE */}
 <div className="mb-6 p-4 bg-white dark:bg-gray-800 rounded shadow">
 <h2 className="text-xl font-bold">
 Score: {score} / {total}
@@ -32,22 +30,17 @@ Score: {score} / {total}
 <p className="text-lg">Percentage: {percentage}%</p>
 </div>
 
-{/* QUESTIONS */}
 <div className="space-y-6">
 {questions.map((q, index) => {
 const userAnswer = answers[index]
 const correct = q.correct_answer
 
 return (
-<div
-key={index}
-className="p-4 bg-white dark:bg-gray-800 rounded border"
->
+<div key={index} className="p-4 bg-white dark:bg-gray-800 rounded border">
 <p className="font-semibold mb-3">
 {index + 1}. {q.question}
 </p>
 
-<div className="space-y-2">
 {["A", "B", "C", "D"].map((opt) => {
 const text = q[`option_${opt.toLowerCase()}` as keyof typeof q]
 
@@ -69,10 +62,17 @@ return (
 )
 })}
 </div>
-</div>
 )
 })}
 </div>
 </div>
+)
+}
+
+export default function ReviewPage() {
+return (
+<Suspense fallback={<div>Loading...</div>}>
+<ReviewContent />
+</Suspense>
 )
 }
