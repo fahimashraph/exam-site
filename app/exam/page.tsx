@@ -86,6 +86,10 @@ if (error) {
 console.error("Save error:", error)
 } else {
 console.log("Result saved!")
+
+window.location.href = `/exam/review?answers=${encodeURIComponent(
+JSON.stringify(answers)
+)}`
 }
 }
 
