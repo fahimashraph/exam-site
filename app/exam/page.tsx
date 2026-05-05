@@ -86,10 +86,13 @@ if (error) {
 console.error("Save error:", error)
 } else {
 console.log("Result saved!")
+console.log("QUESTIONS SENT:", questions)
+localStorage.setItem("examData", JSON.stringify({
+answers,
+questions
+}))
 
-window.location.href = `/exam/review?answers=${encodeURIComponent(
-JSON.stringify(answers)
-)}&questions=${encodeURIComponent}(JSON.stringify(questions))}`
+window.location.href = "/exam/review"
 }
 }
 

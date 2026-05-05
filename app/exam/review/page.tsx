@@ -10,21 +10,23 @@ correct_answer: string
 }
 
 function ReviewContent() {
-const params = useSearchParams()
-const answers = JSON.parse(params.get("answers") || "{}")
-const questionsFromExam: Question[] = JSON.parse(params.get("questions") || "[]")
+const data = JSON.parse(localStorage.getItem("examData") || "{}")
+
+const answers: string[] = data.answers || {}
+const questionsFromExam: Question[] = data.questions || []
 
 const total = questionsFromExam.length
 let score = 0
 
-questionsFromExam.forEach((q: any, index: number) => {
+questionsFromExam.forEach((q, index) => {
 if (answers[index] === q.correct_answer) {
 score++
 }
 })
 
-const percentage = Math.round((score / total) * 100)
-
+const percentage = total > 0
+ ? Math.round((score / total) * 100)
+:0
 return (
 <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 text-black dark:text-white">
 <h1 className="text-2xl font-bold mb-4">Review</h1>
