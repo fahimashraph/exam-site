@@ -11,9 +11,14 @@ correct_answer: string
 }
 
 function ReviewContent() {
-const [answers, setAnswers] = useState<string[]>([])
+const [answers, setAnswers] = useState<Record<number, string>>({})
 const [questionsFromExam, setQuestionsFromExam] = useState<Question[]>([])
+useEffect(() => {
+const data = JSON.parse(localStorage.getItem("examData") || "{}")
 
+setAnswers(data.answers || [])
+setQuestionsFromExam(data.questions || [])
+}, [])
 const total = questionsFromExam.length
 let score = 0
 
