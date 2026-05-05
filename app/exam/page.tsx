@@ -158,7 +158,11 @@ answers[currentQuestionIndex] === opt
 <button
 onClick={prevQuestion}
 disabled={currentQuestionIndex === 0}
-className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+className={`px-4 py-2 rounded text-white ${
+currentQuestionIndex === 0
+? "bg-gray-400 cursor-not-allowed"
+: "bg-blue-600 hover:bg-blue-700"
+}`}
 >
 Previous
 </button>
