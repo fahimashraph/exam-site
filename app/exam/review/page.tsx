@@ -2,12 +2,17 @@
 
 import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
-import { questions } from "../../../lib/questions"
+
+type Question = {
+question: string
+options: string[]
+correct_answer: string
+}
 
 function ReviewContent() {
 const params = useSearchParams()
 const answers = JSON.parse(params.get("answers") || "{}")
-const questionsFromExam = JSON.parse(params.get("questions") || "[]")
+const questionsFromExam: Question[] = JSON.parse(params.get("questions") || "[]")
 
 const total = questionsFromExam.length
 let score = 0
@@ -32,7 +37,7 @@ Score: {score} / {total}
 </div>
 
 <div className="space-y-6">
-{questions.map((q, index) => {
+{questionsFromExam.map((q, index) => {
 const userAnswer = answers[index]
 const correct = q.correct_answer
 
