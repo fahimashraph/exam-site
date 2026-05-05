@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 
@@ -10,10 +11,8 @@ correct_answer: string
 }
 
 function ReviewContent() {
-const data = JSON.parse(localStorage.getItem("examData") || "{}")
-
-const answers: string[] = data.answers || {}
-const questionsFromExam: Question[] = data.questions || []
+const [answers, setAnswers] = useState<string[]>([])
+const [questionsFromExam, setQuestionsFromExam] = useState<Question[]>([])
 
 const total = questionsFromExam.length
 let score = 0
@@ -27,6 +26,11 @@ score++
 const percentage = total > 0
  ? Math.round((score / total) * 100)
 :0
+
+if (questionsFromExam.length === 0) {
+return <div>Loading review...</div>
+}
+
 return (
 <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 text-black dark:text-white">
 <h1 className="text-2xl font-bold mb-4">Review</h1>
