@@ -89,7 +89,7 @@ console.log("Result saved!")
 
 window.location.href = `/exam/review?answers=${encodeURIComponent(
 JSON.stringify(answers)
-)}`
+)}&qyestions=${encodeURIComponent}(JSON.stringify(questions))}`
 }
 }
 

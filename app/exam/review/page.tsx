@@ -7,11 +7,12 @@ import { questions } from "../../../lib/questions"
 function ReviewContent() {
 const params = useSearchParams()
 const answers = JSON.parse(params.get("answers") || "{}")
+const questionsFromExam = JSON.parse(params.get("questions") || "[]")
 
-const total = questions.length
+const total = questionsFromExam.length
 let score = 0
 
-questions.forEach((q, index) => {
+questionsFromExam.forEach((q: any, index: number) => {
 if (answers[index] === q.correct_answer) {
 score++
 }
