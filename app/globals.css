@@ -1,94 +1,798 @@
 @import "tailwindcss";
 
-:root {
-  --background: #0A0A0F;
-  --foreground: #ffffff;
-  --surface: rgba(255, 255, 255, 0.04);
-  --surface-hover: rgba(255, 255, 255, 0.07);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
-  --accent: #6366f1;
-  --accent-violet: #7c3aed;
-  --accent-glow: rgba(99, 102, 241, 0.25);
-  --text-muted: rgba(255, 255, 255, 0.40);
-  --text-secondary: rgba(255, 255, 255, 0.65);
+/* ═══════════════════════════════════════════════════════════════════
+   EXAMPREP — ADAPTIVE THEME SYSTEM v3
+   
+   APPROACH:
+   Rather than trying to intercept Tailwind's compiled utility classes
+   (which is fragile with Tailwind v4's JIT), this version uses:
+   
+   1. CSS custom properties on :root and html[data-theme] 
+   2. @layer base overrides that are guaranteed to apply
+   3. Direct element selectors for high-specificity components
+   4. A light-mode body class (.light) populated by a tiny inline script
+      in layout.tsx (no JS framework change — just a <script> tag)
+   
+   Dark mode: default (no class needed)
+   Light mode: <html class="light"> — set by prefers-color-scheme listener
+═══════════════════════════════════════════════════════════════════ */
+
+
+/* ───────────────────────────────────────────────────────────────────
+   FONT-FACE / SIZE SYSTEM
+   Applied globally — both modes.
+   Goal: readable for 60-90 min study sessions.
+   Base is 16px. We nudge up to 16.5px and tighten tracking.
+─────────────────────────────────────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+  /* Root font bump: 16px → 17px for study-session readability.
+     All rem-based Tailwind sizes scale proportionally with this. */
+  font-size: 17px;
 }
 
+body {
+  font-family: var(--font-geist-sans), -apple-system, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.65;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+
+/* ───────────────────────────────────────────────────────────────────
+   TAILWIND BRIDGE
+─────────────────────────────────────────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg-page);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-* {
-  box-sizing: border-box;
+
+/* ═══════════════════════════════════════════════════════════════════
+   DARK MODE TOKENS  (default — no class needed)
+═══════════════════════════════════════════════════════════════════ */
+:root {
+  color-scheme: dark;
+
+  /* Slightly richer, deeper dark — #07070E feels more premium than #0A0A0F */
+  --bg-page:     #07070E;
+  --bg-page-alt: #080810;
+  --text-primary:   #ffffff;
+
+  /* Scrollbar */
+  --scrollbar-thumb:       rgba(255,255,255,0.12);
+  --scrollbar-thumb-hover: rgba(255,255,255,0.22);
+
+  /* Selection */
+  --selection-bg: rgba(99,102,241,0.40);
+  --selection-fg: #ffffff;
+
+  /* Focus */
+  --focus-ring: rgba(99,102,241,0.65);
 }
 
-html {
-  scroll-behavior: smooth;
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIGHT MODE TOKENS
+   Applied via @media AND via .light class (set by inline script).
+   Using both ensures it works regardless of JS/hydration timing.
+═══════════════════════════════════════════════════════════════════ */
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg-page:     #F2EFE9;
+    --bg-page-alt: #EDE9E2;
+    --text-primary: #141210;
+
+    --scrollbar-thumb:       rgba(100,90,80,0.25);
+    --scrollbar-thumb-hover: rgba(100,90,80,0.42);
+
+    --selection-bg: rgba(67,56,202,0.18);
+    --selection-fg: #141210;
+
+    --focus-ring: rgba(67,56,202,0.55);
+  }
 }
+
+.light {
+  color-scheme: light;
+  --bg-page:     #F2EFE9;
+  --bg-page-alt: #EDE9E2;
+  --text-primary: #141210;
+
+  --scrollbar-thumb:       rgba(100,90,80,0.25);
+  --scrollbar-thumb-hover: rgba(100,90,80,0.42);
+
+  --selection-bg: rgba(67,56,202,0.18);
+  --selection-fg: #141210;
+
+  --focus-ring: rgba(67,56,202,0.55);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   BASE ELEMENT STYLES (both modes)
+═══════════════════════════════════════════════════════════════════ */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.10);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.18);
-}
-
-/* Selection */
 ::selection {
-  background: rgba(99, 102, 241, 0.35);
-  color: white;
+  background: var(--selection-bg);
+  color: var(--selection-fg);
 }
 
-/* Focus ring */
 *:focus-visible {
-  outline: 2px solid rgba(99, 102, 241, 0.6);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
-/* Pulse animation for live indicator */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   ANIMATIONS  (both modes)
+═══════════════════════════════════════════════════════════════════ */
+
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+  0%,100% { opacity:1; transform:scale(1); }
+  50%     { opacity:0.5; transform:scale(0.85); }
 }
-
-/* Timer warning animation */
 @keyframes timer-warn {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  0%,100% { opacity:1; }
+  50%     { opacity:0.6; }
 }
-
-/* Fade in for page loads */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
 }
 
-.animate-fade-up {
-  animation: fadeUp 0.4s ease both;
-}
-
+.animate-fade-up   { animation: fadeUp 0.4s ease both; }
 .animate-fade-up-1 { animation-delay: 0.05s; }
 .animate-fade-up-2 { animation-delay: 0.10s; }
 .animate-fade-up-3 { animation-delay: 0.15s; }
 .animate-fade-up-4 { animation-delay: 0.20s; }
 .animate-fade-up-5 { animation-delay: 0.25s; }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+
+   ██╗     ██╗ ██████╗ ██╗  ██╗████████╗    ███╗   ███╗ ██████╗ ██████╗ ███████╗
+   ██║     ██║██╔════╝ ██║  ██║╚══██╔══╝    ████╗ ████║██╔═══██╗██╔══██╗██╔════╝
+   ██║     ██║██║  ███╗███████║   ██║       ██╔████╔██║██║   ██║██║  ██║█████╗  
+   ██║     ██║██║   ██║██╔══██║   ██║       ██║╚██╔╝██║██║   ██║██║  ██║██╔══╝  
+   ███████╗██║╚██████╔╝██║  ██║   ██║       ██║ ╚═╝ ██║╚██████╔╝██████╔╝███████╗
+   ╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝       ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
+   
+   Everything below applies ONLY in light mode.
+   Specificity: use element + class combos where Tailwind utilities resist override.
+   
+═══════════════════════════════════════════════════════════════════ */
+
+@media (prefers-color-scheme: light), (.light) {
+  /* Duplicate selector trick for .light class support */
+}
+
+/* Using both @media AND .light class via a mixin-like approach.
+   We write each rule block twice — once for @media, once for .light. */
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION A: PAGE & BODY
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  html, body { background-color: #F2EFE9; color: #141210; }
+  .min-h-screen { background-color: #F2EFE9 !important; }
+}
+.light html, .light body,
+html.light, html.light body { background-color: #F2EFE9; color: #141210; }
+html.light .min-h-screen { background-color: #F2EFE9 !important; }
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION B: TEXT — THE MOST CRITICAL FIX
+   
+   The core problem: text-white/* creates near-invisible text on ivory.
+   We remap each opacity tier to a warm charcoal equivalent.
+   
+   Design scale (targeting 4.5:1 WCAG contrast on #F2EFE9 ≈ hsl(38,20%,93%)):
+   - text-white (pure)    → #141210  (warm near-black, WCAG AAA)
+   - text-white/80        → #1E1916  (very dark)
+   - text-white/70        → #2A231F  (dark)
+   - text-white/60        → #3A3028  (medium-dark — body text)
+   - text-white/50 /55    → #4A3D35  (medium — secondary)  
+   - text-white/40 /45    → #6B5A50  (muted — labels)
+   - text-white/30 /35    → #8C7A6F  (faint — hints)
+   - text-white/20 /25    → #A89589  (very faint — placeholders)
+   - text-white/15 /18    → #C4B5AB  (ghost — decorative)
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  /* text-white itself */
+  .text-white { color: #141210 !important; }
+
+  /* Opacity tiers — STRONG values, not the previous washed-out ones */
+  .text-white\/80, .text-white\/\[0\.80\] { color: #1A1410 !important; }
+  .text-white\/70, .text-white\/\[0\.70\] { color: #231C18 !important; }
+  .text-white\/65, .text-white\/\[0\.65\] { color: #29201A !important; }
+  .text-white\/60, .text-white\/\[0\.60\] { color: #302620 !important; }
+  .text-white\/55, .text-white\/\[0\.55\] { color: #3A2E27 !important; }
+  .text-white\/50, .text-white\/\[0\.50\] { color: #42352D !important; }
+  .text-white\/45, .text-white\/\[0\.45\] { color: #4E3F36 !important; }
+  .text-white\/40, .text-white\/\[0\.40\] { color: #5C4C42 !important; }
+  .text-white\/38, .text-white\/\[0\.38\] { color: #635249 !important; }
+  .text-white\/35, .text-white\/\[0\.35\] { color: #6B584F !important; }
+  .text-white\/32, .text-white\/\[0\.32\] { color: #725E55 !important; }
+  .text-white\/30, .text-white\/\[0\.30\] { color: #7A645B !important; }
+  .text-white\/28, .text-white\/\[0\.28\] { color: #806960 !important; }
+  .text-white\/25, .text-white\/\[0\.25\] { color: #89706A !important; }
+  .text-white\/22, .text-white\/\[0\.22\] { color: #927872 !important; }
+  .text-white\/20, .text-white\/\[0\.20\] { color: #98817B !important; }
+  .text-white\/18, .text-white\/\[0\.18\] { color: #A08C87 !important; }
+  .text-white\/15, .text-white\/\[0\.15\] { color: #B09B97 !important; }
+
+  /* CRITICAL: protect white text inside gradient/coloured buttons */
+  a[class*="from-indigo"],
+  a[class*="from-emerald"],
+  a[class*="from-teal"],
+  button[class*="from-indigo"],
+  button[class*="from-emerald"],
+  button[class*="from-teal"] {
+    color: #ffffff !important;
+  }
+  /* Protect SVG strokes/fills that use white literally */
+  svg [stroke="white"],
+  svg [fill="white"],
+  [style*="stroke: white"],
+  [style*="fill: white"] {
+    /* attribute selectors, not class — browser ignores these correctly */
+  }
+}
+
+/* Duplicate for .light class */
+html.light .text-white { color: #141210 !important; }
+html.light .text-white\/80, html.light .text-white\/\[0\.80\] { color: #1A1410 !important; }
+html.light .text-white\/70, html.light .text-white\/\[0\.70\] { color: #231C18 !important; }
+html.light .text-white\/65, html.light .text-white\/\[0\.65\] { color: #29201A !important; }
+html.light .text-white\/60, html.light .text-white\/\[0\.60\] { color: #302620 !important; }
+html.light .text-white\/55, html.light .text-white\/\[0\.55\] { color: #3A2E27 !important; }
+html.light .text-white\/50, html.light .text-white\/\[0\.50\] { color: #42352D !important; }
+html.light .text-white\/45, html.light .text-white\/\[0\.45\] { color: #4E3F36 !important; }
+html.light .text-white\/40, html.light .text-white\/\[0\.40\] { color: #5C4C42 !important; }
+html.light .text-white\/38, html.light .text-white\/\[0\.38\] { color: #635249 !important; }
+html.light .text-white\/35, html.light .text-white\/\[0\.35\] { color: #6B584F !important; }
+html.light .text-white\/30, html.light .text-white\/\[0\.30\] { color: #7A645B !important; }
+html.light .text-white\/25, html.light .text-white\/\[0\.25\] { color: #89706A !important; }
+html.light .text-white\/20, html.light .text-white\/\[0\.20\] { color: #98817B !important; }
+html.light .text-white\/18, html.light .text-white\/\[0\.18\] { color: #A08C87 !important; }
+html.light .text-white\/15, html.light .text-white\/\[0\.15\] { color: #B09B97 !important; }
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION C: SURFACES — SOLID WARM CARDS
+   
+   Replace translucent white-on-dark surfaces with solid warm cards.
+   Contrast hierarchy: page #F2EFE9 → cards #EAE6DF → hover #E2DED6
+   Each tier is a distinct, visible step. No transparency.
+   
+   bg-white/[0.02] = nearly nothing     → lightest warm tint
+   bg-white/[0.04] = primary card bg   → main surface  
+   bg-white/[0.07] = hover state       → visible lift
+   bg-white/[0.10]+ = stronger panels  → clear separation
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  /* Subtle tints — separators, ambient panels */
+  .bg-white\/\[0\.015\] { background-color: #E8E4DC !important; }
+  .bg-white\/\[0\.02\]  { background-color: #E5E0D8 !important; }
+  .bg-white\/\[0\.03\]  { background-color: #E0DBD2 !important; }
+  .bg-white\/\[0\.035\] { background-color: #DDD8CF !important; }
+
+  /* PRIMARY CARD — clearly lifts off the #F2EFE9 page.
+     Delta is ~14 lightness steps — unmistakable in person. */
+  .bg-white\/\[0\.04\]  { background-color: #D9D3CA !important; }
+
+  /* Hover states — obvious warmth step above resting */
+  .bg-white\/\[0\.05\]  { background-color: #D4CEC5 !important; }
+  .bg-white\/\[0\.06\]  { background-color: #CFC9BF !important; }
+  .bg-white\/\[0\.07\]  { background-color: #CAC4BA !important; }
+
+  /* Stronger panels — headers, deep-nested cards */
+  .bg-white\/\[0\.08\]  { background-color: #C5BEB4 !important; }
+  .bg-white\/\[0\.09\]  { background-color: #C0BAB0 !important; }
+  .bg-white\/\[0\.10\],
+  .bg-white\/10         { background-color: #BAB4AA !important; }
+  .bg-white\/\[0\.12\]  { background-color: #B2ACA2 !important; }
+  .bg-white\/15,
+  .bg-white\/\[0\.15\]  { background-color: #A9A398 !important; }
+  .bg-white\/20         { background-color: #9E988D !important; }
+  .bg-white\/8          { background-color: #C5BEB4 !important; }
+
+  /* Hover variants */
+  .hover\:bg-white\/\[0\.04\]:hover { background-color: #D9D3CA !important; }
+  .hover\:bg-white\/\[0\.05\]:hover { background-color: #D4CEC5 !important; }
+  .hover\:bg-white\/\[0\.06\]:hover { background-color: #CFC9BF !important; }
+  .hover\:bg-white\/\[0\.07\]:hover { background-color: #CAC4BA !important; }
+  .hover\:bg-white\/\[0\.08\]:hover { background-color: #C5BEB4 !important; }
+  .hover\:bg-white\/\[0\.09\]:hover { background-color: #C0BAB0 !important; }
+}
+
+html.light .bg-white\/\[0\.015\] { background-color: #E8E4DC !important; }
+html.light .bg-white\/\[0\.02\]  { background-color: #E5E0D8 !important; }
+html.light .bg-white\/\[0\.03\]  { background-color: #E0DBD2 !important; }
+html.light .bg-white\/\[0\.035\] { background-color: #DDD8CF !important; }
+html.light .bg-white\/\[0\.04\]  { background-color: #D9D3CA !important; }
+html.light .bg-white\/\[0\.05\]  { background-color: #D4CEC5 !important; }
+html.light .bg-white\/\[0\.06\]  { background-color: #CFC9BF !important; }
+html.light .bg-white\/\[0\.07\]  { background-color: #CAC4BA !important; }
+html.light .bg-white\/\[0\.08\]  { background-color: #C5BEB4 !important; }
+html.light .bg-white\/\[0\.09\]  { background-color: #C0BAB0 !important; }
+html.light .bg-white\/\[0\.10\],
+html.light .bg-white\/10         { background-color: #BAB4AA !important; }
+html.light .bg-white\/\[0\.12\]  { background-color: #B2ACA2 !important; }
+html.light .hover\:bg-white\/\[0\.07\]:hover { background-color: #CAC4BA !important; }
+html.light .hover\:bg-white\/\[0\.08\]:hover { background-color: #C5BEB4 !important; }
+html.light .hover\:bg-white\/\[0\.09\]:hover { background-color: #C0BAB0 !important; }
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION D: BORDERS — VISIBLE WARM GRAY
+   
+   All white/opacity borders → warm gray at proper contrast.
+   Target: borders must be visible without being harsh.
+   On #F2EFE9 background, we need at least 35-45% alpha warm gray.
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  /* Separator / decorative */
+  .border-white\/\[0\.04\] { border-color: rgba(100,88,72,0.18) !important; }
+  .border-white\/\[0\.05\] { border-color: rgba(100,88,72,0.22) !important; }
+  .border-white\/\[0\.06\] { border-color: rgba(100,88,72,0.26) !important; }
+
+  /* Standard card borders */
+  .border-white\/\[0\.07\] { border-color: rgba(95,83,68,0.30) !important; }
+  .border-white\/\[0\.08\] { border-color: rgba(90,78,64,0.36) !important; }
+  .border-white\/\[0\.09\] { border-color: rgba(88,76,62,0.38) !important; }
+  .border-white\/\[0\.10\] { border-color: rgba(85,73,59,0.42) !important; }
+  .border-white\/\[0\.13\] { border-color: rgba(80,68,55,0.46) !important; }
+  .border-white\/\[0\.14\] { border-color: rgba(78,66,53,0.48) !important; }
+  .border-white\/\[0\.15\] { border-color: rgba(75,63,50,0.50) !important; }
+  .border-white\/\[0\.16\] { border-color: rgba(72,60,48,0.52) !important; }
+  .border-white\/\[0\.18\] { border-color: rgba(70,58,46,0.54) !important; }
+  .border-white\/\[0\.20\] { border-color: rgba(68,56,44,0.56) !important; }
+  .border-white\/\[0\.22\] { border-color: rgba(66,54,42,0.58) !important; }
+  .border-white\/\[0\.25\] { border-color: rgba(64,52,40,0.60) !important; }
+
+  /* Hover states */
+  .hover\:border-white\/\[0\.14\]:hover { border-color: rgba(78,66,53,0.50) !important; }
+  .hover\:border-white\/\[0\.15\]:hover { border-color: rgba(75,63,50,0.52) !important; }
+  .hover\:border-white\/\[0\.16\]:hover { border-color: rgba(72,60,48,0.54) !important; }
+  .hover\:border-white\/\[0\.20\]:hover { border-color: rgba(68,56,44,0.58) !important; }
+}
+
+html.light .border-white\/\[0\.04\] { border-color: rgba(100,88,72,0.18) !important; }
+html.light .border-white\/\[0\.05\] { border-color: rgba(100,88,72,0.22) !important; }
+html.light .border-white\/\[0\.06\] { border-color: rgba(100,88,72,0.26) !important; }
+html.light .border-white\/\[0\.07\] { border-color: rgba(95,83,68,0.30) !important; }
+html.light .border-white\/\[0\.08\] { border-color: rgba(90,78,64,0.36) !important; }
+html.light .border-white\/\[0\.09\] { border-color: rgba(88,76,62,0.38) !important; }
+html.light .border-white\/\[0\.10\] { border-color: rgba(85,73,59,0.42) !important; }
+html.light .border-white\/\[0\.14\] { border-color: rgba(78,66,53,0.48) !important; }
+html.light .border-white\/\[0\.16\] { border-color: rgba(72,60,48,0.52) !important; }
+html.light .hover\:border-white\/\[0\.14\]:hover { border-color: rgba(78,66,53,0.50) !important; }
+html.light .hover\:border-white\/\[0\.16\]:hover { border-color: rgba(72,60,48,0.54) !important; }
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION E: MCQ OPTION CARDS — THE KEY EXAM UX FIX
+   
+   Problem: After answer selection, unselected options use opacity-45
+   making them near-invisible on light. Also, the default state
+   (bg-white/[0.03] border-white/[0.07]) was invisible on ivory.
+   
+   Fix:
+   1. Default unselected options → clearly readable warm card
+   2. opacity-45 / opacity-50 → full opacity (only colour distinguishes states)
+   3. Selected/correct/wrong → accent colours are sufficient signaling
+   4. Hover state → obvious warm lift
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+
+  /* ── MCQ Opacity override — most important fix ── */
+  /* Unselected options after selection are set to opacity-45.
+     Remove this in light mode — colour alone signals state. */
+  .opacity-45 { opacity: 1 !important; }
+  .opacity-50 { opacity: 1 !important; }
+
+  /* Exception: truly disabled form buttons should still look disabled */
+  button[disabled].opacity-45,
+  button:disabled.opacity-45,
+  button[disabled].opacity-50,
+  button:disabled.opacity-50 {
+    opacity: 0.38 !important;
+  }
+
+  /* ── MCQ option letter badge — dark bg → warm bg ── */
+  /* The .bg-white\/[0.06] .bg-white\/[0.07] used on letter badges */
+  /* Already covered by Section C surface overrides */
+
+  /* ── Progress bar track ── */
+  .bg-white\/\[0\.07\] { background-color: #DDD8D0 !important; }
+  /* When used as progress track (h-1, h-0.5) — same value, readable */
+}
+
+html.light .opacity-45 { opacity: 1 !important; }
+html.light .opacity-50 { opacity: 1 !important; }
+html.light button[disabled].opacity-45,
+html.light button:disabled.opacity-45 { opacity: 0.38 !important; }
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION F: BUTTONS — ACTIVE & READABLE
+   
+   Problems:
+   - Next button: text-indigo-300 (pale lavender) → near invisible on light  
+   - Ghost buttons: text-white/45 → too faint for clickable UI
+   - All secondary buttons look disabled
+   
+   Fix: remap colour utilities to strong values for light background
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+
+  /* ── Pastel colour text → rich dark equivalents ── */
+  /* These pastel Tailwind colours are designed for dark mode.
+     On light they become accessible, dark shades. */
+  .text-indigo-300 { color: #4338CA !important; }  /* indigo-700 */
+  .text-indigo-400 { color: #4338CA !important; }  /* indigo-700 */
+  .text-violet-400 { color: #6D28D9 !important; }  /* violet-700 */
+  .text-blue-400   { color: #1D4ED8 !important; }  /* blue-700   */
+  .text-emerald-300{ color: #065F46 !important; }  /* emerald-800 */
+  .text-emerald-400{ color: #047857 !important; }  /* emerald-700 */
+  .text-red-400    { color: #B91C1C !important; }  /* red-700     */
+  .text-amber-400  { color: #92400E !important; }  /* amber-800   */
+  .text-pink-400   { color: #9D174D !important; }  /* pink-800    */
+  .text-orange-400 { color: #9A3412 !important; }  /* orange-800  */
+
+  /* Hover text-white → near-black */
+  .hover\:text-white:hover { color: #141210 !important; }
+
+  /* ── Next / secondary indigo buttons ── */
+  /* bg-indigo-500/[0.15] → visible indigo-tinted card */
+  .bg-indigo-500\/\[0\.15\],
+  .bg-indigo-500\/15       { background-color: rgba(67,56,202,0.10) !important; }
+  .bg-indigo-500\/\[0\.20\],
+  .bg-indigo-500\/20       { background-color: rgba(67,56,202,0.14) !important; }
+  .bg-indigo-500\/\[0\.25\],
+  .bg-indigo-500\/25       { background-color: rgba(67,56,202,0.18) !important; }
+
+  .hover\:bg-indigo-500\/\[0\.25\]:hover,
+  .hover\:bg-indigo-500\/25:hover { background-color: rgba(67,56,202,0.18) !important; }
+  .hover\:bg-indigo-500\/\[0\.30\]:hover,
+  .hover\:bg-indigo-500\/30:hover { background-color: rgba(67,56,202,0.22) !important; }
+
+  /* Indigo button borders → visible */
+  .border-indigo-500\/\[0\.25\],
+  .border-indigo-500\/25 { border-color: rgba(67,56,202,0.38) !important; }
+  .border-indigo-500\/30 { border-color: rgba(67,56,202,0.42) !important; }
+  .border-indigo-500\/50 { border-color: rgba(67,56,202,0.55) !important; }
+
+  .hover\:border-indigo-500\/50:hover { border-color: rgba(67,56,202,0.55) !important; }
+
+  /* text-indigo-200 hover (Next button hover) */
+  .hover\:text-indigo-200:hover { color: #3730A3 !important; }  /* indigo-800 */
+
+  /* ── Emerald secondary buttons ── */
+  .bg-emerald-500\/15,
+  .bg-emerald-500\/\[0\.15\] { background-color: rgba(4,120,87,0.10) !important; }
+  .bg-emerald-500\/\[0\.20\] { background-color: rgba(4,120,87,0.14) !important; }
+  .border-emerald-500\/30    { border-color: rgba(4,120,87,0.42) !important; }
+  .border-emerald-500\/25    { border-color: rgba(4,120,87,0.38) !important; }
+  .hover\:bg-emerald-500\/\[0\.25\]:hover,
+  .hover\:bg-emerald-500\/25:hover { background-color: rgba(4,120,87,0.18) !important; }
+  .hover\:border-emerald-500\/50:hover { border-color: rgba(4,120,87,0.55) !important; }
+  .hover\:text-emerald-200:hover { color: #065F46 !important; }
+
+  /* ── MCQ correct/wrong answer backgrounds ── */
+  /* emerald bg for correct answer — tighten on light */
+  .bg-emerald-500\/\[0\.14\],
+  .bg-emerald-500\/\[0\.15\] { background-color: rgba(4,120,87,0.12) !important; }
+  .border-emerald-500\/40    { border-color: rgba(4,120,87,0.50) !important; }
+
+  /* red bg for wrong answer */
+  .bg-red-500\/\[0\.12\],
+  .bg-red-500\/12           { background-color: rgba(185,28,28,0.09) !important; }
+  .border-red-500\/\[0\.25\],
+  .border-red-500\/25       { border-color: rgba(185,28,28,0.40) !important; }
+  .border-red-500\/35       { border-color: rgba(185,28,28,0.48) !important; }
+
+  /* ── Selected option (indigo highlight) ── */
+  .bg-indigo-500\/\[0\.15\].border-indigo-500\/50 {
+    background-color: rgba(67,56,202,0.12) !important;
+    border-color: rgba(67,56,202,0.55) !important;
+  }
+
+  /* ── Ghost / outline buttons (Prev, Back, etc.) ── */
+  /* These use bg-white/[0.03] border-white/[0.08] text-white/45 */
+  /* Already handled by text/bg/border sections above. */
+
+  /* Ensure active ghost buttons read as clickable */
+  button:not([disabled]):not(.opacity-45):not(.opacity-50),
+  a[role="button"]:not([disabled]) {
+    /* Inherits all the above — no additional override needed */
+  }
+
+  /* ── Gradient CTA buttons — always white text ── */
+  a[class*="from-indigo"],
+  a[class*="from-emerald"],
+  a[class*="from-teal"],
+  button[class*="from-indigo"],
+  button[class*="from-emerald"],
+  button[class*="from-teal"] {
+    color: #ffffff !important;
+  }
+
+  /* ── Disabled states — keep visually inactive ── */
+  button:disabled,
+  button[disabled] {
+    opacity: 0.38 !important;
+    cursor: not-allowed !important;
+  }
+}
+
+/* .light class duplicates for F */
+html.light .text-indigo-300 { color: #4338CA !important; }
+html.light .text-indigo-400 { color: #4338CA !important; }
+html.light .text-violet-400 { color: #6D28D9 !important; }
+html.light .text-emerald-300{ color: #065F46 !important; }
+html.light .text-emerald-400{ color: #047857 !important; }
+html.light .text-red-400    { color: #B91C1C !important; }
+html.light .text-amber-400  { color: #92400E !important; }
+html.light .text-blue-400   { color: #1D4ED8 !important; }
+html.light .hover\:text-white:hover { color: #141210 !important; }
+html.light .hover\:text-indigo-200:hover { color: #3730A3 !important; }
+html.light .bg-indigo-500\/15 { background-color: rgba(67,56,202,0.10) !important; }
+html.light .bg-indigo-500\/\[0\.15\] { background-color: rgba(67,56,202,0.10) !important; }
+html.light .border-indigo-500\/30 { border-color: rgba(67,56,202,0.42) !important; }
+html.light .text-indigo-300 { color: #4338CA !important; }
+html.light a[class*="from-indigo"],
+html.light a[class*="from-emerald"],
+html.light button[class*="from-indigo"],
+html.light button[class*="from-emerald"] { color: #ffffff !important; }
+html.light button:disabled,
+html.light button[disabled] { opacity: 0.38 !important; }
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION G: STICKY HEADERS & NAVIGATION
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  header {
+    background-color: rgba(242,239,233,0.90) !important;
+    border-color: rgba(90,78,64,0.30) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+  }
+  /* Nav link active state pill */
+  .bg-white\/\[0\.08\]:where(nav *) {
+    background-color: #D9D4CB !important;
+  }
+  /* Separator h-px lines */
+  .via-white\/\[0\.10\],
+  .via-white\/\[0\.07\] {
+    --tw-gradient-via: rgba(90,78,64,0.25) !important;
+  }
+}
+
+html.light header {
+  background-color: rgba(242,239,233,0.90) !important;
+  border-color: rgba(90,78,64,0.30) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION H: INPUTS & FORMS
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  input[type="email"],
+  input[type="password"],
+  input[type="text"],
+  input[type="tel"] {
+    background-color: #FEFCF8 !important;
+    border-color: rgba(90,78,64,0.35) !important;
+    color: #141210 !important;
+    font-size: 0.95rem !important;
+  }
+  input::placeholder { color: #C0B5A8 !important; opacity: 1 !important; }
+  input:focus {
+    background-color: #ffffff !important;
+    border-color: rgba(67,56,202,0.55) !important;
+    box-shadow: 0 0 0 3px rgba(67,56,202,0.09) !important;
+    outline: none !important;
+  }
+}
+
+html.light input[type="email"],
+html.light input[type="password"],
+html.light input[type="text"],
+html.light input[type="tel"] {
+  background-color: #FEFCF8 !important;
+  border-color: rgba(90,78,64,0.35) !important;
+  color: #141210 !important;
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION I: MODALS, DRAWERS, OVERLAYS
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  /* Hardcoded dark modal/drawer hex classes */
+  [class*="bg-\[#0D"] {
+    background-color: #FEFCF8 !important;
+    border-color: rgba(90,78,64,0.28) !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.07) !important;
+    color: #141210 !important;
+  }
+  [class*="bg-\[#0E"] {
+    background-color: #FBF9F4 !important;
+    border-color: rgba(90,78,64,0.25) !important;
+    color: #141210 !important;
+  }
+  /* Backdrop blur overlays */
+  .backdrop-blur-sm,
+  .backdrop-blur-md {
+    background-color: rgba(242,239,233,0.82) !important;
+  }
+}
+
+html.light [class*="bg-\[#0D"] {
+  background-color: #FEFCF8 !important;
+  border-color: rgba(90,78,64,0.28) !important;
+  color: #141210 !important;
+}
+html.light [class*="bg-\[#0E"] {
+  background-color: #FBF9F4 !important;
+  color: #141210 !important;
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION J: CARD SHADOWS & ELEVATION
+   Cards on light need box-shadow to separate from background.
+   Without shadow they look flat and merge into the page.
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  .rounded-2xl.border {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important;
+  }
+  .rounded-2xl.border:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.09), 0 2px 4px rgba(0,0,0,0.05) !important;
+  }
+  .rounded-3xl.border {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04) !important;
+  }
+  /* CTA button shadows */
+  .shadow-indigo-500\/25,
+  .shadow-indigo-500\/30 {
+    box-shadow: 0 4px 14px rgba(67,56,202,0.25) !important;
+  }
+  .hover\:shadow-indigo-500\/40:hover,
+  .hover\:shadow-indigo-500\/50:hover {
+    box-shadow: 0 6px 20px rgba(67,56,202,0.32) !important;
+  }
+  .shadow-emerald-500\/20 {
+    box-shadow: 0 4px 14px rgba(4,120,87,0.22) !important;
+  }
+  .hover\:shadow-emerald-500\/35:hover {
+    box-shadow: 0 6px 18px rgba(4,120,87,0.30) !important;
+  }
+}
+
+html.light .rounded-2xl.border {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important;
+}
+html.light .rounded-2xl.border:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.09), 0 2px 4px rgba(0,0,0,0.05) !important;
+}
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION K: AMBIENT GLOWS — REDUCE ON LIGHT
+   The large blurred radial gradients that create atmosphere in dark
+   mode are overwhelming on ivory. Reduce to barely-there hints.
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  .bg-indigo-600\/10,
+  .bg-indigo-600\/9,
+  .bg-indigo-600\/8,
+  .bg-indigo-600\/\[0\.09\],
+  .bg-indigo-600\/\[0\.08\] { background-color: rgba(67,56,202,0.04) !important; }
+
+  .bg-violet-600\/8,
+  .bg-violet-600\/7,
+  .bg-violet-600\/\[0\.07\] { background-color: rgba(109,40,217,0.03) !important; }
+
+  .bg-blue-600\/5,
+  .bg-blue-600\/\[0\.06\],
+  .bg-blue-600\/\[0\.05\]   { background-color: rgba(29,78,216,0.03) !important; }
+}
+
+html.light .bg-indigo-600\/10,
+html.light .bg-indigo-600\/9,
+html.light .bg-indigo-600\/8 { background-color: rgba(67,56,202,0.04) !important; }
+html.light .bg-violet-600\/8,
+html.light .bg-violet-600\/7 { background-color: rgba(109,40,217,0.03) !important; }
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION L: TYPOGRAPHY SCALE — BOTH MODES
+   
+   Global font size nudge for study-session readability.
+   Body is 16.5px base (set on html above).
+   Tailwind's rem-based classes inherit this.
+   
+   We additionally override specific tiers for more control.
+   Note: text-[Npx] arbitrary values are NOT overridden (no selector match).
+─────────────────────────────────────────────────────────────────── */
+
+/*
+  TYPOGRAPHY SCALE — both dark and light modes.
+  Root is 17px (set on html above). All rem values below are
+  relative to that root, so effective px sizes are noted.
+  
+  text-[Npx] arbitrary values are NOT matched by these selectors
+  and remain untouched — badge/label pixel sizes stay as designed.
+*/
+
+/* Body / option text — the most important for readability */
+.text-xs   { font-size: 0.76rem  !important; line-height: 1.5;  }  /* ~13px */
+.text-sm   { font-size: 0.88rem  !important; line-height: 1.6;  }  /* ~15px */
+.text-base { font-size: 1.00rem  !important; line-height: 1.65; }  /* 17px  */
+.text-lg   { font-size: 1.15rem  !important; line-height: 1.55; }  /* ~20px — option text */
+.text-xl   { font-size: 1.30rem  !important; line-height: 1.45; }  /* ~22px — question text */
+.text-2xl  { font-size: 1.55rem  !important; line-height: 1.35; }  /* ~26px */
+.text-3xl  { font-size: 1.94rem  !important; line-height: 1.28; }  /* ~33px */
+.text-4xl  { font-size: 2.35rem  !important; line-height: 1.20; }  /* ~40px */
+.text-5xl  { font-size: 2.85rem  !important; line-height: 1.10; }
+.text-6xl  { font-size: 3.40rem  !important; line-height: 1.07; }
+.text-7xl  { font-size: 4.10rem  !important; line-height: 1.04; }
+
+
+/* ───────────────────────────────────────────────────────────────────
+   SECTION M: SCROLLBAR, SELECTION, MISC — LIGHT MODE
+─────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  ::selection          { background: rgba(67,56,202,0.20); color: #141210; }
+  ::-webkit-scrollbar-thumb       { background: rgba(100,90,80,0.25); }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(100,90,80,0.42); }
+  *:focus-visible { outline-color: rgba(67,56,202,0.55); }
+}
+
+html.light ::selection { background: rgba(67,56,202,0.20); color: #141210; }
