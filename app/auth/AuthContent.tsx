@@ -19,18 +19,18 @@ function Field({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="flex items-center gap-1.5 text-[10px] font-semibold text-white/40 uppercase tracking-widest">
-        <span className="text-white/25">{icon}</span>
+      <label className="flex items-center gap-1.5 text-[10px] font-semibold text-white/55 uppercase tracking-widest">
+        <span className="text-white/35">{icon}</span>
         {label}
       </label>
       {children}
-      {hint && <p className="text-[10px] text-white/25 pl-0.5">{hint}</p>}
+      {hint && <p className="text-[10px] text-white/40 pl-0.5">{hint}</p>}
     </div>
   )
 }
 
 const inputClass =
-  "w-full bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.15] focus:border-indigo-500/60 focus:bg-white/[0.06] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 transition-all duration-200 outline-none"
+  "w-full bg-white/[0.06] border border-white/[0.12] hover:border-indigo-400/30 focus:border-indigo-400/70 focus:bg-indigo-500/[0.05] rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 transition-all duration-200 outline-none"
 
 // ── Inline SVG icons ─────────────────────────────────────────────
 const IUser = () => (
@@ -146,14 +146,16 @@ export default function AuthContent() {
   // ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#06060F] flex items-center justify-center px-4 py-12 relative overflow-hidden">
 
       {/* Ambient glows */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-15%] left-[20%] w-[500px] h-[500px] rounded-full bg-indigo-600/10 blur-[110px]" />
-        <div className="absolute bottom-[-10%] right-[15%] w-[400px] h-[400px] rounded-full bg-violet-600/8 blur-[100px]" />
+        <div className="absolute top-[-15%] left-[20%] w-[560px] h-[560px] rounded-full bg-indigo-600/22 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[15%] w-[440px] h-[440px] rounded-full bg-violet-600/15 blur-[110px]" />
+        <div className="absolute bottom-[5%] left-[-5%] w-[280px] h-[280px] rounded-full bg-pink-600/8 blur-[80px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_40%_at_50%_0%,rgba(99,102,241,0.12),transparent_70%)]" />
         <div
-          className="absolute inset-0 opacity-[0.025]"
+          className="absolute inset-0 opacity-[0.04]"
           style={{
             backgroundImage: `linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
                               linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)`,
@@ -178,17 +180,18 @@ export default function AuthContent() {
         </div>
 
         {/* Card */}
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-8 backdrop-blur-sm relative overflow-hidden">
+        <div className="bg-gradient-to-b from-white/[0.09] to-white/[0.04] border border-white/[0.14] rounded-2xl p-8 backdrop-blur-xl relative overflow-hidden"
+          style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 24px 80px -12px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.08)" }}>
 
           {/* Top edge glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-px bg-gradient-to-r from-transparent via-indigo-400/50 to-transparent" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-56 h-px bg-gradient-to-r from-transparent via-indigo-400/70 to-transparent" />
 
           {/* Header */}
           <div className="mb-7">
             <h1 className="text-2xl font-bold text-white tracking-tight mb-1.5">
               {isLogin ? "Welcome back" : "Create your account"}
             </h1>
-            <p className="text-sm text-white/40 font-light">
+            <p className="text-sm text-white/60 font-light">
               {isLogin
                 ? "Sign in to continue your exam preparation."
                 : "Fill in your details to get started today."}
@@ -196,19 +199,23 @@ export default function AuthContent() {
           </div>
 
           {/* Mode toggle */}
-          <div className="flex bg-white/[0.04] border border-white/[0.08] rounded-xl p-1 mb-7">
+          <div className="flex bg-black/20 border border-white/[0.08] rounded-xl p-1 mb-7">
             <Link
               href="/auth?mode=login"
-              className={`flex-1 text-center py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                isLogin ? "bg-white/10 text-white shadow-sm" : "text-white/40 hover:text-white/60"
+              className={`flex-1 text-center py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                isLogin
+                  ? "bg-gradient-to-r from-indigo-500/30 to-violet-500/20 text-white border border-indigo-500/25 shadow-sm"
+                  : "text-white/50 hover:text-white/70"
               }`}
             >
               Sign In
             </Link>
             <Link
               href="/auth?mode=signup"
-              className={`flex-1 text-center py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                !isLogin ? "bg-white/10 text-white shadow-sm" : "text-white/40 hover:text-white/60"
+              className={`flex-1 text-center py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                !isLogin
+                  ? "bg-gradient-to-r from-indigo-500/30 to-violet-500/20 text-white border border-indigo-500/25 shadow-sm"
+                  : "text-white/50 hover:text-white/70"
               }`}
             >
               Sign Up
@@ -274,11 +281,11 @@ export default function AuthContent() {
 
                 {/* Section divider */}
                 <div className="flex items-center gap-3 !mt-6 !mb-1">
-                  <div className="flex-1 h-px bg-white/[0.07]" />
-                  <span className="text-[10px] text-white/25 font-semibold uppercase tracking-widest">
+                  <div className="flex-1 h-px bg-white/[0.12]" />
+                  <span className="text-[10px] text-white/40 font-semibold uppercase tracking-widest">
                     Account credentials
                   </span>
-                  <div className="flex-1 h-px bg-white/[0.07]" />
+                  <div className="flex-1 h-px bg-white/[0.12]" />
                 </div>
               </>
             )}
@@ -352,7 +359,7 @@ export default function AuthContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-semibold py-3 rounded-xl text-sm shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 !mt-6"
+              className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-semibold py-3 rounded-xl text-sm shadow-xl shadow-indigo-500/35 hover:shadow-indigo-500/55 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 !mt-6"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">

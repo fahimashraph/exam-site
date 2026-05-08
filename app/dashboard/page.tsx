@@ -215,7 +215,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── NAVBAR ──────────────────────────────────────────── */}
-      <header className="relative z-20 border-b border-white/[0.08] bg-[#07070E]/85 backdrop-blur-xl sticky top-0">
+      <header className="relative z-20 border-b border-white/[0.11] bg-[#020207]/92 backdrop-blur-xl sticky top-0" style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04), 0 4px 32px rgba(0,0,0,0.6)" }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-3.5 flex items-center justify-between gap-4">
 
           {/* Logo */}
@@ -421,7 +421,7 @@ export default function DashboardPage() {
               </div>
               <div className="relative z-10 flex-1">
                 <p className="text-base font-bold text-white">Start New Exam</p>
-                <p className="text-xs text-indigo-200/90 mt-0.5 font-medium">Choose subject, year & mode</p>
+                <p className="text-xs text-indigo-100 mt-0.5 font-medium">Choose subject, year & mode</p>
               </div>
               <div className="relative z-10 w-7 h-7 rounded-lg bg-white/[0.10] flex items-center justify-center text-indigo-300 group-hover:text-white group-hover:bg-white/[0.18] group-hover:translate-x-0.5 transition-all duration-300">
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -448,7 +448,7 @@ export default function DashboardPage() {
               </div>
               <div className="relative z-10 flex-1">
                 <p className="text-base font-bold text-white">Continue Practice</p>
-                <p className="text-xs text-amber-200/90 mt-0.5 font-medium">Pick up where you left off</p>
+                <p className="text-xs text-amber-100 mt-0.5 font-medium">Pick up where you left off</p>
               </div>
               <div className="relative z-10 text-amber-500/40 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all duration-300">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -476,7 +476,7 @@ export default function DashboardPage() {
               </div>
               <div className="relative z-10 flex-1">
                 <p className="text-base font-bold text-white">Review Results</p>
-                <p className="text-xs text-emerald-200/90 mt-0.5 font-medium">See your answer breakdown</p>
+                <p className="text-xs text-emerald-100 mt-0.5 font-medium">See your answer breakdown</p>
               </div>
               <div className="relative z-10 text-emerald-500/40 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all duration-300">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -522,8 +522,8 @@ export default function DashboardPage() {
               )}
             </div>
 
-            <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl overflow-hidden"
-              style={{ boxShadow: "0 4px 24px -4px rgba(0,0,0,0.4)" }}>
+            <div className="bg-white/[0.05] border border-white/[0.12] rounded-2xl overflow-hidden"
+              style={{ boxShadow: "0 8px 40px -4px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)" }}>
 
               {recentResults.length === 0 ? (
                 /* Empty state */
@@ -547,7 +547,7 @@ export default function DashboardPage() {
               ) : (
                 <>
                   {/* Table header */}
-                  <div className="grid grid-cols-12 px-5 py-3 border-b border-white/[0.07] bg-white/[0.02]">
+                  <div className="grid grid-cols-12 px-5 py-3 border-b border-white/[0.10] bg-white/[0.04]">
                     <span className="col-span-1 text-[10px] font-black uppercase tracking-widest text-white/30">#</span>
                     <span className="col-span-4 text-[10px] font-black uppercase tracking-widest text-white/30">Date</span>
                     <span className="col-span-3 text-[10px] font-black uppercase tracking-widest text-white/30 text-center">Score</span>
