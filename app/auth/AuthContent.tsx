@@ -255,15 +255,30 @@ export default function AuthContent() {
                     />
                   </Field>
 
-                  <Field label="Grade / Class" icon={<IGrade />}>
-                    <input
-                      type="text"
-                      value={gradeClass}
-                      onChange={(e) => setGradeClass(e.target.value)}
-                      placeholder="e.g. Grade 10A"
-                      required
-                      className={inputClass}
-                    />
+                  <Field label="Grade" icon={<IGrade />}>
+                    <div className="relative">
+                      <select
+                        value={gradeClass}
+                        onChange={(e) => setGradeClass(e.target.value)}
+                        required
+                        className={`${inputClass} cursor-pointer appearance-none`}
+                        style={{ colorScheme: "dark" }}
+                      >
+                        <option value="" disabled style={{ background: "#0A0A14", color: "rgba(255,255,255,0.4)" }}>
+                          Select your grade
+                        </option>
+                        {["Grade 9", "Grade 10", "Grade 11", "Grade 12", "Grade 13"].map((g) => (
+                          <option key={g} value={g} style={{ background: "#0A0A14", color: "#fff" }}>
+                            {g}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                    </div>
                   </Field>
                 </div>
 

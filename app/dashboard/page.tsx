@@ -160,6 +160,7 @@ export default function DashboardPage() {
   const displayName    = user?.user_metadata?.full_name?.split(" ")[0]
     ?? user?.email?.split("@")[0]
     ?? "Student"
+  const userGrade      = user?.user_metadata?.grade_class ?? null
   const recentResults  = results.slice(0, 5)
 
   // ── LOADING SCREEN ────────────────────────────────────────────
@@ -293,6 +294,13 @@ export default function DashboardPage() {
             <p className="text-white/50 text-base mt-2 max-w-lg leading-relaxed">
               {getMotivation(totalExams, avgScore)}
             </p>
+            {userGrade && (
+              <div className="mt-3">
+                <span className="inline-flex items-center gap-1.5 text-[9px] font-bold tracking-[0.18em] uppercase text-violet-400 bg-violet-500/10 border border-violet-500/25 px-2.5 py-1 rounded-full">
+                  📚 {userGrade}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Streak card — vibrant */}
@@ -618,7 +626,9 @@ export default function DashboardPage() {
         <div className="animate-fade-up animate-fade-up-4">
           <div className="flex items-center justify-between mb-4 px-1">
             <h2 className="text-[11px] font-extrabold tracking-[0.22em] uppercase text-white/35">Practice by Subject</h2>
-            <span className="text-[10px] text-white/25 font-medium">Click to start a session</span>
+            <span className="text-[10px] text-white/25 font-medium">
+              {userGrade ? `${userGrade} · Click to start` : "Click to start a session"}
+            </span>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

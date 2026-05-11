@@ -323,9 +323,10 @@ export default function ExamSelectPage() {
   const [year, setYear] = useState<number | null>(null)
   const [mode, setMode] = useState<(typeof MODES)[0] | null>(null)
   const [userName, setUserName] = useState("Student")
+  const [userGrade, setUserGrade] = useState<string | null>(null)
   const [launching, setLaunching] = useState(false)
 
-  /* Auth guard + get first name */
+  /* Auth guard + get first name + grade */
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) { router.push("/auth?mode=login"); return }
@@ -334,6 +335,7 @@ export default function ExamSelectPage() {
         user.email?.split("@")[0] ??
         "Student"
       setUserName(name)
+      setUserGrade(user.user_metadata?.grade_class ?? null)
     })
   }, [router])
 
@@ -347,6 +349,7 @@ export default function ExamSelectPage() {
         subjectName: subject.name,
         year,
         mode: mode.id,
+        grade: userGrade,
       })
     )
     router.push("/exam/session")
@@ -357,16 +360,31 @@ export default function ExamSelectPage() {
     <div className="animate-fade-up">
       <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-indigo-400 mb-2">Step 1 of 4</p>
       <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-1.5">Choose a Subject</h1>
-      <p className="text-white/40 text-sm font-light mb-10">Hey {userName} — pick the subject you want to practise.</p>
+      <p className="text-white/40 text-sm font-light mb-4">
+        Hey {userName} — {userGrade ? `your ${userGrade} content is below.` : "pick the subject you want to practise."}
+      </p>
+      {userGrade ? (
+        <div className="flex items-center gap-2 mb-7">
+          <span className="inline-flex items-center gap-1.5 text-[9px] font-bold tracking-[0.15em] uppercase text-violet-400 bg-violet-500/10 border border-violet-500/20 px-2.5 py-1.5 rounded-lg">
+            📚 {userGrade}
+          </span>
+          <span className="text-[10px] text-white/30">All subjects shown · content filtered for your grade</span>
+        </div>
+      ) : (
+        <div className="mb-7" />
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {SUBJECTS.map((s) => {
           const sel = subject?.id === s.id
           return (
-            <button
+            <div
               key={s.id}
+              role="button"
+              tabIndex={0}
               onClick={() => setSubject(s)}
-              className={`group relative text-left w-full rounded-2xl border bg-gradient-to-b ${s.gradient} ${s.border} ${s.hoverBorder} p-6 shadow-xl hover:shadow-2xl ${s.shadowHover} transition-all duration-300 ${
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSubject(s); } }}
+              className={`group relative text-left w-full rounded-2xl border bg-gradient-to-b ${s.gradient} ${s.border} ${s.hoverBorder} p-6 shadow-xl hover:shadow-2xl ${s.shadowHover} transition-all duration-300 cursor-pointer ${
                 sel ? "ring-2 ring-indigo-400/70 ring-offset-2 ring-offset-[#0A0A0F]" : ""
               }`}
             >
@@ -390,7 +408,7 @@ export default function ExamSelectPage() {
                 </span>
               </div>
               <p className="text-xs text-white/35">{s.questions} questions available</p>
-            </button>
+            </div>
           )
         })}
       </div>
@@ -468,10 +486,13 @@ export default function ExamSelectPage() {
         {MODES.map((m) => {
           const sel = mode?.id === m.id
           return (
-            <button
+            <div
               key={m.id}
+              role="button"
+              tabIndex={0}
               onClick={() => setMode(m)}
-              className={`relative text-left w-full border rounded-2xl p-6 transition-all duration-300 ${sel ? m.selectedStyle : m.cardStyle + " hover:opacity-90"}`}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setMode(m); } }}
+              className={`relative text-left w-full border rounded-2xl p-6 transition-all duration-300 cursor-pointer ${sel ? m.selectedStyle : m.cardStyle + " hover:opacity-90"}`}
             >
               {sel && (
                 <div className="absolute top-4.5 right-4.5 w-5 h-5 rounded-full bg-white/[0.12] border border-white/[0.20] flex items-center justify-center">
@@ -498,7 +519,7 @@ export default function ExamSelectPage() {
                   </li>
                 ))}
               </ul>
-            </button>
+            </div>
           )
         })}
       </div>
