@@ -51,6 +51,11 @@ interface Toast {
   message: string;
 }
 
+interface ExtractionResult {
+  status: "match" | "mismatch" | "no_markscheme";
+  mismatches: string[];
+}
+
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const GRADES = ["Grade 9", "Grade 10", "Grade 11", "Grade 12", "Grade 13"] as const;
@@ -342,6 +347,8 @@ export default function AdminDashboard() {
   const [pendingMarkschemeId, setPendingMarkschemeId] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [extractingId, setExtractingId] = useState<string | null>(null);
+  const [extractResults, setExtractResults] = useState<Record<string, ExtractionResult>>({});
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const markschemeInputRef = useRef<HTMLInputElement>(null);
@@ -539,6 +546,49 @@ export default function AdminDashboard() {
     addToast("success", `"${label}" deleted.`);
   }
 
+  // ── Extract MCQs ──
+
+  async function handleExtract(paper: PaperRow) {
+    if (extractingId) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { addToast("error", "Not authenticated."); return; }
+
+    setExtractingId(paper.id);
+    try {
+      const res = await fetch("/api/admin/extract-questions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ paperId: paper.id }),
+      });
+      const json = await res.json();
+
+      // Store validation badge regardless of success/failure
+      if (json.validation) {
+        setExtractResults((prev) => ({
+          ...prev,
+          [paper.id]: {
+            status: json.validation.status,
+            mismatches: json.validation.mismatches ?? [],
+          },
+        }));
+      }
+
+      if (!res.ok) {
+        addToast("error", json.error ?? "Extraction failed");
+      } else {
+        const label = paper.title ?? ([paper.subject, paper.year].filter(Boolean).join(" ") || "Paper");
+        const answerNote = json.answered > 0 ? `, ${json.answered} with answers` : "";
+        addToast("success", `"${label}": extracted ${json.extracted} question${json.extracted !== 1 ? "s" : ""}${answerNote}.`);
+      }
+    } catch {
+      addToast("error", "Network error during extraction.");
+    }
+    setExtractingId(null);
+  }
+
   // ── Computed ──
 
   const filteredPapers = papers
@@ -680,7 +730,7 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 text-[10px] font-semibold text-gray-400 tracking-wider uppercase">Session</th>
                   <th className="px-4 py-3 text-[10px] font-semibold text-gray-400 tracking-wider uppercase">Board</th>
                   <th className="px-4 py-3 text-[10px] font-semibold text-gray-400 tracking-wider uppercase">Uploaded</th>
-                  <th className="px-4 py-3 w-20" />
+                  <th className="px-4 py-3 w-28" />
                 </tr>
               </thead>
 
@@ -705,6 +755,20 @@ export default function AdminDashboard() {
                         <span className="text-[12px] text-gray-400">{relativeTime(paper.created_at)}</span>
                       </td>
                       <td className="px-4 py-3.5">
+                        <div className="flex items-center gap-2 justify-end">
+                        {/* Validation badge — always visible once extraction has been attempted */}
+                        {extractResults[paper.id] && extractResults[paper.id].status !== "no_markscheme" && (
+                          <span
+                            title={
+                              extractResults[paper.id].status === "match"
+                                ? "Markscheme validated"
+                                : extractResults[paper.id].mismatches.join("\n")
+                            }
+                            className="text-[13px] leading-none cursor-help select-none"
+                          >
+                            {extractResults[paper.id].status === "match" ? "🟢" : "🔴"}
+                          </span>
+                        )}
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           {/* View paper */}
                           {paper.paper_pdf_url ? (
@@ -734,6 +798,24 @@ export default function AdminDashboard() {
                               </svg>
                             </a>
                           )}
+                          {/* Extract MCQs */}
+                          <button
+                            onClick={() => handleExtract(paper)}
+                            disabled={extractingId === paper.id}
+                            title="Extract MCQ questions from PDF"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-violet-50 text-gray-400 hover:text-violet-600 transition-colors disabled:opacity-50"
+                          >
+                            {extractingId === paper.id ? (
+                              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" className="animate-spin">
+                                <circle cx="6.5" cy="6.5" r="5" stroke="rgba(139,92,246,0.3)" strokeWidth="1.5"/>
+                                <path d="M6.5 1.5C6.5 1.5 9 1.5 11 3.5" stroke="#8b5cf6" strokeWidth="1.5" strokeLinecap="round"/>
+                              </svg>
+                            ) : (
+                              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                <path d="M6.5 1L8 4.5H11.5L8.75 6.75L9.75 10.5L6.5 8.25L3.25 10.5L4.25 6.75L1.5 4.5H5L6.5 1Z" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="round"/>
+                              </svg>
+                            )}
+                          </button>
                           {/* Delete */}
                           <button onClick={() => handleDelete(paper)}
                             className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors">
@@ -741,6 +823,7 @@ export default function AdminDashboard() {
                               <path d="M2.5 4H10.5M5 4V2.5H8V4M4 4V10.5C4 10.7761 4.22386 11 4.5 11H8.5C8.77614 11 9 10.7761 9 10.5V4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                           </button>
+                        </div>
                         </div>
                       </td>
                     </tr>

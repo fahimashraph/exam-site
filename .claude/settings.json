@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(awk '/class PDFParse/,/^}/' node_modules/pdf-parse/dist/pdf-parse/cjs/index.d.cts)"
+    ]
+  }
+}
