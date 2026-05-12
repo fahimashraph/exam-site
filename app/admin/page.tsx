@@ -34,15 +34,15 @@ interface QueuedFile {
 interface PaperRow {
   id: string;
   title: string | null;
-  grade: string;
-  subject: string;
-  year: number;
+  grade: string | null;
+  subject: string | null;
+  year: string | number | null;
   session: string | null;
   paper_type: string | null;
   exam_board: string | null;
-  paper_pdf_url: string;
+  paper_pdf_url: string | null;
   markscheme_pdf_url: string | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 interface Toast {
@@ -83,8 +83,11 @@ const GRADE_STYLES: Record<string, { bg: string; text: string; ring: string; bar
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function relativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
+function relativeTime(dateStr: string | null | undefined): string {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return "—";
+  const diff = Date.now() - d.getTime();
   const secs = Math.floor(diff / 1000);
   if (secs < 60) return "Just now";
   const mins = Math.floor(secs / 60);
@@ -94,7 +97,7 @@ function relativeTime(dateStr: string): string {
   const days = Math.floor(hours / 24);
   if (days === 1) return "Yesterday";
   if (days < 7) return `${days} days ago`;
-  return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 // ── Cambridge subject code → app subject name ────────────────────────────────
@@ -196,8 +199,9 @@ function extractStoragePath(fileUrl: string, bucket: "papers" | "markschemes"): 
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function SubjectBadge({ subject }: { subject: string }) {
-  const s = SUBJECT_STYLES[subject] ?? { bg: "bg-gray-100", text: "text-gray-500", ring: "ring-gray-200", bar: "bg-gray-400" };
+function SubjectBadge({ subject }: { subject: string | null }) {
+  const key = subject ?? "";
+  const s = SUBJECT_STYLES[key] ?? { bg: "bg-gray-100", text: "text-gray-500", ring: "ring-gray-200", bar: "bg-gray-400" };
   return (
     <span className={`inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full ${s.bg} ${s.text} ring-1 ${s.ring}`}>
       {subject || "Unknown"}
@@ -205,11 +209,12 @@ function SubjectBadge({ subject }: { subject: string }) {
   );
 }
 
-function GradeBadge({ grade }: { grade: string }) {
-  const s = GRADE_STYLES[grade] ?? { bg: "bg-gray-100", text: "text-gray-500", ring: "ring-gray-200", bar: "bg-gray-400" };
+function GradeBadge({ grade }: { grade: string | null }) {
+  const key = grade ?? "";
+  const s = GRADE_STYLES[key] ?? { bg: "bg-gray-100", text: "text-gray-500", ring: "ring-gray-200", bar: "bg-gray-400" };
   return (
     <span className={`inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full ${s.bg} ${s.text} ring-1 ${s.ring}`}>
-      {grade || "Unset"}
+      {grade || "—"}
     </span>
   );
 }
@@ -530,7 +535,8 @@ export default function AdminDashboard() {
     }
 
     setPapers((prev) => prev.filter((p) => p.id !== paper.id));
-    addToast("success", `"${paper.title ?? `${paper.subject} ${paper.year}`}" deleted.`);
+    const label = paper.title ?? ([paper.subject, paper.year].filter(Boolean).join(" ") || "Paper");
+    addToast("success", `"${label}" deleted.`);
   }
 
   // ── Computed ──
@@ -607,7 +613,7 @@ export default function AdminDashboard() {
         />
         <StatCard
           label="Latest Upload" value={isLoading ? "—" : latestPaper ? relativeTime(latestPaper.created_at) : "None"}
-          sub={latestPaper ? `${latestPaper.grade || "No grade"} · ${latestPaper.subject || "No subject"}` : "No papers yet"}
+          sub={latestPaper ? `${latestPaper.grade ?? "No grade"} · ${latestPaper.subject ?? "No subject"}` : "No papers yet"}
           iconBg="bg-amber-50" trend={{ dir: "neutral", label: "Recent" }}
           icon={<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#f59e0b" strokeWidth="1.5"/><path d="M10 6V10L12.5 12.5" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
         />
@@ -684,7 +690,11 @@ export default function AdminDashboard() {
                     <tr key={paper.id} className="hover:bg-gray-50/60 transition-colors group">
                       <td className="px-4 py-3.5"><GradeBadge grade={paper.grade} /></td>
                       <td className="px-4 py-3.5"><SubjectBadge subject={paper.subject} /></td>
-                      <td className="px-4 py-3.5"><span className="text-[13px] text-gray-600 font-medium">{paper.year}</span></td>
+                      <td className="px-4 py-3.5">
+                        <span className="text-[13px] text-gray-600 font-medium">
+                          {paper.year ?? "—"}
+                        </span>
+                      </td>
                       <td className="px-4 py-3.5">
                         <span className="text-[11px] text-gray-500">{paper.session ?? "—"}</span>
                       </td>
@@ -697,14 +707,23 @@ export default function AdminDashboard() {
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           {/* View paper */}
-                          <a href={paper.paper_pdf_url} target="_blank" rel="noopener noreferrer"
-                            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-indigo-600 transition-colors"
-                            title="View paper">
-                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                              <path d="M6.5 2.5C3.5 2.5 1.5 6.5 1.5 6.5C1.5 6.5 3.5 10.5 6.5 10.5C9.5 10.5 11.5 6.5 11.5 6.5C11.5 6.5 9.5 2.5 6.5 2.5Z" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="round"/>
-                              <circle cx="6.5" cy="6.5" r="1.5" stroke="currentColor" strokeWidth="1.25"/>
-                            </svg>
-                          </a>
+                          {paper.paper_pdf_url ? (
+                            <a href={paper.paper_pdf_url} target="_blank" rel="noopener noreferrer"
+                              className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-indigo-600 transition-colors"
+                              title="View paper">
+                              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                <path d="M6.5 2.5C3.5 2.5 1.5 6.5 1.5 6.5C1.5 6.5 3.5 10.5 6.5 10.5C9.5 10.5 11.5 6.5 11.5 6.5C11.5 6.5 9.5 2.5 6.5 2.5Z" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="round"/>
+                                <circle cx="6.5" cy="6.5" r="1.5" stroke="currentColor" strokeWidth="1.25"/>
+                              </svg>
+                            </a>
+                          ) : (
+                            <span className="w-7 h-7 flex items-center justify-center text-gray-200" title="No PDF">
+                              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                <path d="M6.5 2.5C3.5 2.5 1.5 6.5 1.5 6.5C1.5 6.5 3.5 10.5 6.5 10.5C9.5 10.5 11.5 6.5 11.5 6.5C11.5 6.5 9.5 2.5 6.5 2.5Z" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="round"/>
+                                <circle cx="6.5" cy="6.5" r="1.5" stroke="currentColor" strokeWidth="1.25"/>
+                              </svg>
+                            </span>
+                          )}
                           {/* View markscheme */}
                           {paper.markscheme_pdf_url && (
                             <a href={paper.markscheme_pdf_url} target="_blank" rel="noopener noreferrer"

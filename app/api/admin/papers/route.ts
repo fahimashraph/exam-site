@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
   const { data, error } = await getSupabaseAdmin()
     .from("papers")
-    .select("*")
+    .select("id, title, grade, subject, year, session, paper_type, exam_board, paper_pdf_url, markscheme_pdf_url, created_at")
     .order("created_at", { ascending: false })
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
